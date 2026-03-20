@@ -1,0 +1,38 @@
+PROPRIETARY LICENSE — Dhwani Rural Information Systems Pvt. Ltd.
+
+Copyright (c) 2026 Dhwani Rural Information Systems Pvt. Ltd.
+All rights reserved.
+
+The following files and directories in this repository contain proprietary
+domain knowledge, product architecture, and operational workflows of
+Dhwani Rural Information Systems Pvt. Ltd.:
+
+DOMAIN KNOWLEDGE SKILLS (Proprietary):
+  skills/csr-compliance-india/
+  skills/fcra-compliance/
+  skills/ngo-operations/
+  skills/development-sector-grants/
+  skills/grant-management-operations/
+  skills/data-mis-design/
+
+mGRANT PRODUCT SKILLS (Proprietary):
+  skills/dris-mgrant-donor/
+  skills/dris-mgrant-csr/
+  skills/dris-mgrant-nuo/
+  skills/dris-mgrant-bulk-upload/
+  skills/dris-mgrant-setup/
+
+These materials may NOT be:
+  - Copied, reproduced, or distributed in any form
+  - Modified or adapted without written authorization
+  - Used outside of Dhwani Rural Information Systems
+  - Shared with external parties, contractors, or consultants
+    without explicit written permission from authorized management
+  - Incorporated into other products, services, or repositories
+
+Unauthorized use, reproduction, or distribution of these materials
+is strictly prohibited and may result in legal action.
+
+For licensing inquiries, contact:
+  Dhwani Rural Information Systems Pvt. Ltd.
+  https://dhwaniris.com

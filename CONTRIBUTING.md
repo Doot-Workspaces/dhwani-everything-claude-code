@@ -1,461 +1,193 @@
-# Contributing to Everything Claude Code
+# Contributing — Dhwani RIS Everything Claude Code
 
-Thanks for wanting to contribute! This repo is a community resource for Claude Code users.
+This repository is **internal to Dhwani Rural Information Systems**. All contributors must be Dhwani RIS team members with repository access granted by the maintainer.
 
-## Table of Contents
-
-- [What We're Looking For](#what-were-looking-for)
-- [Quick Start](#quick-start)
-- [Contributing Skills](#contributing-skills)
-- [Contributing Agents](#contributing-agents)
-- [Contributing Hooks](#contributing-hooks)
-- [Contributing Commands](#contributing-commands)
-- [MCP and documentation (e.g. Context7)](#mcp-and-documentation-eg-context7)
-- [Cross-Harness and Translations](#cross-harness-and-translations)
-- [Pull Request Process](#pull-request-process)
+**Maintainer:** Ankit Jangir (ankitjangir.1690@gmail.com)
 
 ---
 
-## What We're Looking For
+## Contribution Flow
 
-### Agents
-New agents that handle specific tasks well:
-- Language-specific reviewers (Python, Go, Rust)
-- Framework experts (Django, Rails, Laravel, Spring)
-- DevOps specialists (Kubernetes, Terraform, CI/CD)
-- Domain experts (ML pipelines, data engineering, mobile)
+```
+1. Pull latest main
+2. Create a feature branch
+3. Make your changes
+4. Test locally with Claude Code
+5. Push and create a PR
+6. Ankit reviews and merges
+```
 
-### Skills
-Workflow definitions and domain knowledge:
-- Language best practices
-- Framework patterns
-- Testing strategies
-- Architecture guides
+### Branch Naming
 
-### Hooks
-Useful automations:
-- Linting/formatting hooks
-- Security checks
-- Validation hooks
-- Notification hooks
+```
+feat/skill-name          — New skill or major addition
+fix/skill-name           — Fix to an existing skill
+docs/what-changed        — Documentation only
+enhance/skill-name       — Enhancement to existing skill
+```
 
-### Commands
-Slash commands that invoke useful workflows:
-- Deployment commands
-- Testing commands
-- Code generation commands
+### Commit Messages
+
+```
+feat(skills): add new-skill-name
+feat(dris): add dris-prefixed-skill
+fix(skills): correct typo in csr-compliance-india
+docs: update README with new skill catalog
+enhance(rules): add credential management to frappe-security
+```
 
 ---
 
-## Quick Start
+## Adding a New Skill
+
+### 1. Check for Duplicates
+
+Before creating a new skill, search existing skills:
 
 ```bash
-# 1. Fork and clone
-gh repo fork affaan-m/everything-claude-code --clone
-cd everything-claude-code
-
-# 2. Create a branch
-git checkout -b feat/my-contribution
-
-# 3. Add your contribution (see sections below)
-
-# 4. Test locally
-cp -r skills/my-skill ~/.claude/skills/  # for skills
-# Then test with Claude Code
-
-# 5. Submit PR
-git add . && git commit -m "feat: add my-skill" && git push -u origin feat/my-contribution
+ls skills/ | grep -i "your-keyword"
+grep -ri "your-keyword" skills/ --include="*.md" -l
 ```
 
----
+If a skill covers >30% of what you want to add, extend it instead of creating a new one.
 
-## Contributing Skills
+### 2. Choose the Right Category
 
-Skills are knowledge modules that Claude Code loads based on context.
+| Prefix/Location | Category | Who Uses It | License |
+|-----------------|----------|------------|---------|
+| `skills/dris-*` | Product workflow | PMs, BAs, delivery | MIT |
+| `skills/csr-compliance-india/` etc. | Domain knowledge | Anyone needing sector expertise | **Proprietary** |
+| `skills/dris-mgrant-*` | mGrant product | mGrant team | **Proprietary** |
+| `skills/frontend-designer/` etc. | Design | UI/UX, frontend | MIT |
+| `skills/frappe-development/` etc. | Technical | Engineers | MIT |
+| `docs/templates/` | Templates | All | MIT |
+| `docs/guides/` | Guides | All | MIT |
 
-### Directory Structure
+### 3. Create the Skill File
 
 ```
-skills/
-└── your-skill-name/
-    └── SKILL.md
+skills/your-skill-name/SKILL.md
 ```
 
-### SKILL.md Template
+Use Doot ECC frontmatter:
 
-```markdown
+```yaml
 ---
 name: your-skill-name
-description: Brief description shown in skill list
+description: "One-line description — specific, action-oriented"
 origin: ECC
 ---
-
-# Your Skill Title
-
-Brief overview of what this skill covers.
-
-## Core Concepts
-
-Explain key patterns and guidelines.
-
-## Code Examples
-
-\`\`\`typescript
-// Include practical, tested examples
-function example() {
-  // Well-commented code
-}
-\`\`\`
-
-## Best Practices
-
-- Actionable guidelines
-- Do's and don'ts
-- Common pitfalls to avoid
-
-## When to Use
-
-Describe scenarios where this skill applies.
 ```
 
-### Skill Checklist
+### 4. Required Sections
 
-- [ ] Focused on one domain/technology
-- [ ] Includes practical code examples
-- [ ] Under 500 lines
-- [ ] Uses clear section headers
-- [ ] Tested with Claude Code
+Every skill must have:
 
-### Example Skills
+| Section | Required | Purpose |
+|---------|----------|---------|
+| When to Use | Yes | Prevents false triggers and wasted context |
+| Protocol / Steps | Yes | The actual workflow |
+| Key Rules | Yes | Non-negotiable constraints |
+| Output Format | Yes | What the skill produces |
+| Examples | Yes | At least one worked example |
+| Common Pitfalls | Recommended | What agents get wrong |
+| Cross-References | Recommended | Links to related skills |
 
-| Skill | Purpose |
-|-------|---------|
-| `coding-standards/` | TypeScript/JavaScript patterns |
-| `frontend-patterns/` | React and Next.js best practices |
-| `backend-patterns/` | API and database patterns |
-| `security-review/` | Security checklist |
+See `docs/templates/SKILL_TEMPLATE.md` for the full template.
+
+### 5. Add Evals (Recommended)
+
+Create `skills/your-skill-name/evals.json` using `docs/templates/evals-template.json` as a starting point. Minimum 3 test cases:
+- 1 positive trigger test
+- 1 negative trigger test (anti-trigger)
+- 1 output quality test
+
+### 6. Skill Quality Checklist
+
+Before submitting your PR:
+
+- [ ] YAML frontmatter parses without errors
+- [ ] Description is specific and action-oriented (not "helps with X")
+- [ ] "When to Use" section present
+- [ ] At least one worked example
+- [ ] No duplicate content with existing skills (>30% overlap = merge instead)
+- [ ] No credentials, tokens, API keys, or secrets
+- [ ] Under 500 lines (unless domain knowledge requires more)
+- [ ] Cross-references to related skills where applicable
 
 ---
 
-## Contributing Agents
+## Modifying Existing Skills
 
-Agents are specialized assistants invoked via the Task tool.
-
-### File Location
-
-```
-agents/your-agent-name.md
-```
-
-### Agent Template
-
-```markdown
----
-name: your-agent-name
-description: What this agent does and when Claude should invoke it. Be specific!
-tools: ["Read", "Write", "Edit", "Bash", "Grep", "Glob"]
-model: sonnet
----
-
-You are a [role] specialist.
-
-## Your Role
-
-- Primary responsibility
-- Secondary responsibility
-- What you DO NOT do (boundaries)
-
-## Workflow
-
-### Step 1: Understand
-How you approach the task.
-
-### Step 2: Execute
-How you perform the work.
-
-### Step 3: Verify
-How you validate results.
-
-## Output Format
-
-What you return to the user.
-
-## Examples
-
-### Example: [Scenario]
-Input: [what user provides]
-Action: [what you do]
-Output: [what you return]
-```
-
-### Agent Fields
-
-| Field | Description | Options |
-|-------|-------------|---------|
-| `name` | Lowercase, hyphenated | `code-reviewer` |
-| `description` | Used to decide when to invoke | Be specific! |
-| `tools` | Only what's needed | `Read, Write, Edit, Bash, Grep, Glob, WebFetch, Task`, or MCP tool names (e.g. `mcp__context7__resolve-library-id`, `mcp__context7__query-docs`) when the agent uses MCP |
-| `model` | Complexity level | `haiku` (simple), `sonnet` (coding), `opus` (complex) |
-
-### Example Agents
-
-| Agent | Purpose |
-|-------|---------|
-| `tdd-guide.md` | Test-driven development |
-| `code-reviewer.md` | Code review |
-| `security-reviewer.md` | Security scanning |
-| `build-error-resolver.md` | Fix build errors |
+- **Technical/design/workflow skills:** Edit freely, submit PR
+- **Domain knowledge skills** (csr-compliance-india, fcra-compliance, ngo-operations, etc.): These are proprietary. Edits require justification in the PR description — what changed in the law/regulation/practice that necessitates the update
+- **mGrant product skills** (dris-mgrant-*): Coordinate with the product team before modifying
 
 ---
 
-## Contributing Hooks
+## Modifying Rules
 
-Hooks are automatic behaviors triggered by Claude Code events.
+Rules in `rules/` are always-enforced constraints. Changes have broad impact.
 
-### File Location
-
-```
-hooks/hooks.json
-```
-
-### Hook Types
-
-| Type | Trigger | Use Case |
-|------|---------|----------|
-| `PreToolUse` | Before tool runs | Validate, warn, block |
-| `PostToolUse` | After tool runs | Format, check, notify |
-| `SessionStart` | Session begins | Load context |
-| `Stop` | Session ends | Cleanup, audit |
-
-### Hook Format
-
-```json
-{
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "tool == \"Bash\" && tool_input.command matches \"rm -rf /\"",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "echo '[Hook] BLOCKED: Dangerous command' && exit 1"
-          }
-        ],
-        "description": "Block dangerous rm commands"
-      }
-    ]
-  }
-}
-```
-
-### Matcher Syntax
-
-```javascript
-// Match specific tools
-tool == "Bash"
-tool == "Edit"
-tool == "Write"
-
-// Match input patterns
-tool_input.command matches "npm install"
-tool_input.file_path matches "\\.tsx?$"
-
-// Combine conditions
-tool == "Bash" && tool_input.command matches "git push"
-```
-
-### Hook Examples
-
-```json
-// Block dev servers outside tmux
-{
-  "matcher": "tool == \"Bash\" && tool_input.command matches \"npm run dev\"",
-  "hooks": [{"type": "command", "command": "echo 'Use tmux for dev servers' && exit 1"}],
-  "description": "Ensure dev servers run in tmux"
-}
-
-// Auto-format after editing TypeScript
-{
-  "matcher": "tool == \"Edit\" && tool_input.file_path matches \"\\.tsx?$\"",
-  "hooks": [{"type": "command", "command": "npx prettier --write \"$file_path\""}],
-  "description": "Format TypeScript files after edit"
-}
-
-// Warn before git push
-{
-  "matcher": "tool == \"Bash\" && tool_input.command matches \"git push\"",
-  "hooks": [{"type": "command", "command": "echo '[Hook] Review changes before pushing'"}],
-  "description": "Reminder to review before push"
-}
-```
-
-### Hook Checklist
-
-- [ ] Matcher is specific (not overly broad)
-- [ ] Includes clear error/info messages
-- [ ] Uses correct exit codes (`exit 1` blocks, `exit 0` allows)
-- [ ] Tested thoroughly
-- [ ] Has description
-
----
-
-## Contributing Commands
-
-Commands are user-invoked actions with `/command-name`.
-
-### File Location
-
-```
-commands/your-command.md
-```
-
-### Command Template
-
-```markdown
----
-description: Brief description shown in /help
----
-
-# Command Name
-
-## Purpose
-
-What this command does.
-
-## Usage
-
-\`\`\`
-/your-command [args]
-\`\`\`
-
-## Workflow
-
-1. First step
-2. Second step
-3. Final step
-
-## Output
-
-What the user receives.
-```
-
-### Example Commands
-
-| Command | Purpose |
-|---------|---------|
-| `commit.md` | Create git commits |
-| `code-review.md` | Review code changes |
-| `tdd.md` | TDD workflow |
-| `e2e.md` | E2E testing |
-
----
-
-## MCP and documentation (e.g. Context7)
-
-Skills and agents can use **MCP (Model Context Protocol)** tools to pull in up-to-date data instead of relying only on training data. This is especially useful for documentation.
-
-- **Context7** is an MCP server that exposes `resolve-library-id` and `query-docs`. Use it when the user asks about libraries, frameworks, or APIs so answers reflect current docs and code examples.
-- When contributing **skills** that depend on live docs (e.g. setup, API usage), describe how to use the relevant MCP tools (e.g. resolve the library ID, then query docs) and point to the `documentation-lookup` skill or Context7 as the pattern.
-- When contributing **agents** that answer docs/API questions, include the Context7 MCP tool names (e.g. `mcp__context7__resolve-library-id`, `mcp__context7__query-docs`) in the agent's tools and document the resolve → query workflow.
-- **mcp-configs/mcp-servers.json** includes a Context7 entry; users enable it in their harness (e.g. Claude Code, Cursor) to use the documentation-lookup skill (in `skills/documentation-lookup/`) and the `/docs` command.
-
----
-
-## Cross-Harness and Translations
-
-### Skill subsets (Codex and Cursor)
-
-ECC ships skill subsets for other harnesses:
-
-- **Codex:** `.agents/skills/` — skills listed in `agents/openai.yaml` are loaded by Codex.
-- **Cursor:** `.cursor/skills/` — a subset of skills is bundled for Cursor.
-
-When you **add a new skill** that should be available on Codex or Cursor:
-
-1. Add the skill under `skills/your-skill-name/` as usual.
-2. If it should be available on **Codex**, add it to `.agents/skills/` (copy the skill directory or add a reference) and ensure it is referenced in `agents/openai.yaml` if required.
-3. If it should be available on **Cursor**, add it under `.cursor/skills/` per Cursor's layout.
-
-Check existing skills in those directories for the expected structure. Keeping these subsets in sync is manual; mention in your PR if you updated them.
-
-### Translations
-
-Translations live under `docs/` (e.g. `docs/zh-CN`, `docs/zh-TW`, `docs/ja-JP`). If you change agents, commands, or skills that are translated, consider updating the corresponding translation files or opening an issue so maintainers or translators can update them.
+- **Frappe rules** (rules/frappe/): Ankit reviews all changes
+- **Safety rules** (rules/safety/): Require explicit approval from both Ankit and PM
 
 ---
 
 ## Pull Request Process
 
-### 1. PR Title Format
+### PR Title
 
 ```
-feat(skills): add rust-patterns skill
-feat(agents): add api-designer agent
-feat(hooks): add auto-format hook
-fix(skills): update React patterns
-docs: improve contributing guide
+feat(skills): add your-skill-name
 ```
 
-### 2. PR Description
+### PR Description
 
 ```markdown
 ## Summary
 What you're adding and why.
 
-## Type
-- [ ] Skill
-- [ ] Agent
-- [ ] Hook
-- [ ] Command
+## Category
+- [ ] Skill (domain / design / product / technical)
+- [ ] Rule enhancement
+- [ ] Template or guide
+- [ ] Documentation
 
 ## Testing
-How you tested this.
+How you tested this (e.g., "Loaded in Claude Code, ran 3 eval scenarios").
 
 ## Checklist
-- [ ] Follows format guidelines
+- [ ] Follows skill format from SKILL_TEMPLATE.md
 - [ ] Tested with Claude Code
-- [ ] No sensitive info (API keys, paths)
-- [ ] Clear descriptions
+- [ ] No sensitive information
+- [ ] No >30% overlap with existing skills
+- [ ] Cross-references added where applicable
 ```
 
-### 3. Review Process
+### Review
 
-1. Maintainers review within 48 hours
-2. Address feedback if requested
-3. Once approved, merged to main
-
----
-
-## Guidelines
-
-### Do
-- Keep contributions focused and modular
-- Include clear descriptions
-- Test before submitting
-- Follow existing patterns
-- Document dependencies
-
-### Don't
-- Include sensitive data (API keys, tokens, paths)
-- Add overly complex or niche configs
-- Submit untested contributions
-- Create duplicates of existing functionality
+- All PRs are reviewed by **Ankit Jangir**
+- Domain skill changes may also require PM review
+- Feedback will be given within 48 hours
+- Address feedback, then Ankit merges
 
 ---
 
-## File Naming
+## File Naming Conventions
 
-- Use lowercase with hyphens: `python-reviewer.md`
-- Be descriptive: `tdd-workflow.md` not `workflow.md`
-- Match name to filename
+| Element | Convention | Example |
+|---------|-----------|---------|
+| Skill directory | lowercase-hyphenated | `csr-compliance-india/` |
+| DRIS product skills | `dris-` prefix | `dris-feature-spec/` |
+| mGrant skills | `dris-mgrant-` prefix | `dris-mgrant-donor/` |
+| Skill file | Always `SKILL.md` | `skills/ux-reviewer/SKILL.md` |
+| Eval file | Always `evals.json` | `skills/ux-reviewer/evals.json` |
+| Templates | UPPERCASE or descriptive | `CLAUDE_TEMPLATE.md` |
+| Guides | lowercase-hyphenated | `vibe-coding-how-to.md` |
 
 ---
 
 ## Questions?
 
-- **Issues:** [github.com/affaan-m/everything-claude-code/issues](https://github.com/affaan-m/everything-claude-code/issues)
-- **X/Twitter:** [@affaanmustafa](https://x.com/affaanmustafa)
-
----
-
-Thanks for contributing! Let's build a great resource together.
+Contact **Ankit Jangir** — repository maintainer.
