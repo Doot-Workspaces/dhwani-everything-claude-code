@@ -1,35 +1,254 @@
-**Language:** English | [简体中文](README.zh-CN.md) | [繁體中文](docs/zh-TW/README.md) | [日本語](docs/ja-JP/README.md) | [한국어](docs/ko-KR/README.md)
-
-# Everything Claude Code
-
-[![Stars](https://img.shields.io/github/stars/affaan-m/everything-claude-code?style=flat)](https://github.com/affaan-m/everything-claude-code/stargazers)
-[![Forks](https://img.shields.io/github/forks/affaan-m/everything-claude-code?style=flat)](https://github.com/affaan-m/everything-claude-code/network/members)
-[![Contributors](https://img.shields.io/github/contributors/affaan-m/everything-claude-code?style=flat)](https://github.com/affaan-m/everything-claude-code/graphs/contributors)
-[![npm ecc-universal](https://img.shields.io/npm/dw/ecc-universal?label=ecc-universal%20weekly%20downloads&logo=npm)](https://www.npmjs.com/package/ecc-universal)
-[![npm ecc-agentshield](https://img.shields.io/npm/dw/ecc-agentshield?label=ecc-agentshield%20weekly%20downloads&logo=npm)](https://www.npmjs.com/package/ecc-agentshield)
-[![GitHub App Install](https://img.shields.io/badge/GitHub%20App-150%20installs-2ea44f?logo=github)](https://github.com/marketplace/ecc-tools)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-![Shell](https://img.shields.io/badge/-Shell-4EAA25?logo=gnu-bash&logoColor=white)
-![TypeScript](https://img.shields.io/badge/-TypeScript-3178C6?logo=typescript&logoColor=white)
-![Python](https://img.shields.io/badge/-Python-3776AB?logo=python&logoColor=white)
-![Go](https://img.shields.io/badge/-Go-00ADD8?logo=go&logoColor=white)
-![Java](https://img.shields.io/badge/-Java-ED8B00?logo=openjdk&logoColor=white)
-![Perl](https://img.shields.io/badge/-Perl-39457E?logo=perl&logoColor=white)
-![Markdown](https://img.shields.io/badge/-Markdown-000000?logo=markdown&logoColor=white)
-
-> **50K+ stars** | **6K+ forks** | **30 contributors** | **5 languages supported** | **Anthropic Hackathon Winner**
-
----
-
 <div align="center">
 
-**🌐 Language / 语言 / 語言**
+<img src="https://dhwaniris.com/assets/img/Dhwani%20final%20Logo%201.png" alt="Dhwani RIS" width="240" />
 
-[**English**](README.md) | [简体中文](README.zh-CN.md) | [繁體中文](docs/zh-TW/README.md) | [日本語](docs/ja-JP/README.md) | [한국어](docs/ko-KR/README.md)
+# Dhwani RIS — Everything Claude Code
+
+**The AI skill library for teams building social impact technology.**
+
+*A [Dhwani Rural Information Systems](https://dhwaniris.com) project.*
 
 </div>
 
 ---
+
+**Dhwani RIS fork** of [affaan-m/everything-claude-code](https://github.com/affaan-m/everything-claude-code) — the community's AI agent harness performance system.
+
+This fork layers **35+ proprietary skills** on top of the community's 120+ skills, encoding deep domain knowledge (India CSR, FCRA, NGO operations, grant management), product workflows (BRD-to-spec, feature specs, ticketing, release notes), and design systems (anti-AI-slop frontend design, WCAG accessibility auditing, Figma-to-PowerBI conversion) specific to Dhwani Rural Information Systems.
+
+**The result:** Any AI agent (Claude Code, Codex, Cursor, or future tools) connecting to this repo gets both world-class general engineering patterns AND Dhwani's institutional knowledge — from Indian regulatory compliance to mGrant product architecture.
+
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
+---
+
+## DRIS Skill Graph
+
+### Quick Start — "I want to..."
+
+| I want to... | Start with this skill |
+|--------------|----------------------|
+| Understand India CSR law | `csr-compliance-india` |
+| Understand FCRA compliance | `fcra-compliance` |
+| Design a grant management system | `grant-management-operations` + `development-sector-grants` |
+| Convert a BRD into a tech spec | `brd-to-implementation-spec` |
+| Write a feature spec | `dris-feature-spec` |
+| Architect a solution | `dris-technical-pm` (COVE method) + `system-architecture` |
+| Build Frappe DocTypes | `dris-frappe-doctype` → `frappe-development` |
+| Build a Frappe UI | `frappe-ui-design` |
+| Build a beautiful non-Frappe UI | `frontend-designer` |
+| Review UI for UX quality | `ux-reviewer` → `accessibility-auditor` |
+| Convert Figma to PowerBI | `figma-to-powerbi` |
+| Run QA / E2E tests | `qa-testing` |
+| Raise a clean PR | `dris-pr-raiser` |
+| Write release notes | `dris-release-notes` |
+| Draft a client email | `dris-email-drafter` |
+| Generate weekly update | `dris-weekly-update` |
+| Create Linear tickets from a spec | `dris-ticketing` |
+| Onboard to mGrant Donor product | `dris-mgrant-donor` |
+| Onboard to mGrant CSR module | `dris-mgrant-csr` |
+| Onboard to mGrant NuO product | `dris-mgrant-nuo` |
+| Not sure which skill to use | `dris-skill-selector` (routes to the right one) |
+
+### The Golden Path (Idea to Shipped Code)
+
+```
+Client Call / Requirement
+       |
+       v
+[dris-business-analyst] --> BRD + Requirements Matrix
+       |
+       v
+[dris-feature-spec] --> Structured Feature Spec (.docx)
+       |
+       v
+[dris-technical-pm] --> Solution Architecture (COVE method)
+       |
+       v
+[brd-to-implementation-spec] --> Claude Code-ready Tech Spec
+       |
+       v
+  +-- DOMAIN CONTEXT (loaded as needed) --+
+  |  csr-compliance-india                  |
+  |  fcra-compliance                       |
+  |  grant-management-operations           |
+  |  dris-mgrant-donor / csr / nuo         |
+  +----------------------------------------+
+       |
+       v
+[dris-frappe-doctype] --> DocType JSON + Workflows
+       |
+       v
+[frappe-development] --> Production Code
+       |
+       v
+  +-- DESIGN REVIEW CHAIN ----------------+
+  |  frontend-designer --> ux-reviewer     |
+  |  --> accessibility-auditor             |
+  +----------------------------------------+
+       |
+       v
+[qa-testing] --> E2E Tests (Playwright)
+       |
+       v
+[dris-pr-raiser] --> GitHub PR
+       |
+       v
+[dris-release-notes] --> Release Notes
+       |
+       v
+[dris-email-drafter] --> Client Update Email
+```
+
+### DRIS Skills by Category
+
+**Domain Knowledge (7 skills)** — India social sector regulatory and operational expertise
+
+| Skill | What It Knows |
+|-------|---------------|
+| `csr-compliance-india` | Companies Act 2013 Section 135, Schedule VII, 11 MCA reports, penalties, spend calculation |
+| `fcra-compliance` | FCRA 2010 + 2020 amendments, designated SBI account, 20% admin cap, FC-4/FC-6, sub-granting ban |
+| `ngo-operations` | Trust/Society/Section 8 structures, 12A/80G/FCRA/DARPAN/CSR-1 registrations, governance |
+| `development-sector-grants` | Grant lifecycle (9 stages), Theory of Change, LogFrame, M&E, SDGs, SROI |
+| `grant-management-operations` | Fund flow, UCs, SoEs, fund requests, budget management, grant closure |
+| `data-mis-design` | Mobile data collection (ODK, KoBoToolbox, mForm), MIS design, dashboards, DPDP Act |
+| `govt-csr-compliance` | Technical implementation: audit trails, PII encryption, RBAC, WCAG, Hindi localization |
+
+**Design Skills (7 skills)** — UI/UX, accessibility, architecture, and BI conversion
+
+| Skill | What It Does |
+|-------|-------------|
+| `frontend-designer` | Anti-AI-slop design with 30+ aesthetic tones, Dhwani brand defaults, collaborative protocol |
+| `ux-reviewer` | 10-priority UX review framework (accessibility through data visualization) |
+| `accessibility-auditor` | WCAG 2.1 AA audit and auto-fix with contrast calculation |
+| `react-composition-patterns` | Compound components, providers, React 19 changes |
+| `frappe-ui-design` | ui.frappe.io components only, light theme, feature module scaffolding |
+| `system-architecture` | 5-pillar thinking, 20-question framework, AI-aware decomposition |
+| `figma-to-powerbi` | Figma dashboard to PowerBI: theme JSON, layout specs, PBIR scaffolding, DAX measures |
+
+**Product Workflows (17 skills, `dris-` prefix)** — PM, BA, engineering, and delivery
+
+| Skill | Role | What It Produces |
+|-------|------|-----------------|
+| `dris-feature-spec` | PM | Structured feature spec (.docx) from raw ideas |
+| `dris-technical-pm` | PM/Architect | Solution architecture using COVE method |
+| `dris-business-analyst` | BA | BRD + Requirements Matrix from client inputs |
+| `brd-to-implementation-spec` | Architect | Claude Code-ready tech spec (Frappe v16 + Flutter) |
+| `dris-frappe-doctype` | Engineer | DocType JSON fixtures with workflows and permissions |
+| `dris-pr-raiser` | Engineer | Clean GitHub PR with description and test plan |
+| `dris-product-docs` | Writer | Frappe Wiki documentation chapters |
+| `dris-email-drafter` | PM | Pattern-based client emails |
+| `dris-weekly-update` | PM | Weekly progress report (.docx) from git + Linear |
+| `dris-release-notes` | PM | Release notes from git log and Linear tickets |
+| `dris-ticketing` | PM | Structured Linear tickets (batch creation from specs) |
+| `dris-skill-selector` | Router | Routes any task to the correct skill |
+| `dris-mgrant-donor` | Domain | mGrant Donor context: 40+ DocTypes, 5 grant flows |
+| `dris-mgrant-csr` | Domain | mGrant CSR: MCA Section 135 compliance, budget lifecycle |
+| `dris-mgrant-nuo` | Domain | mGrant NuO: NGO grants, sub-grants, FCRA |
+| `dris-mgrant-bulk-upload` | Engineer | Data import with PREP-MAP-SAMPLE-EXECUTE and PM gates |
+| `dris-mgrant-setup` | Engineer | New mGrant deployment (11 phases) |
+
+**Technical Skills (13 skills)** — Frappe, Angular/Node, DevOps, database patterns
+
+| Skill | Focus |
+|-------|-------|
+| `frappe-development` | DocType design, API security, hooks, testing (500 lines of patterns) |
+| `qa-testing` | Playwright E2E, Page Object Model, CI, permission testing (569 lines) |
+| `pm-workflow` | Figma-to-code pipeline, walkthrough generation, demo prep |
+| `angular-node-patterns` | Angular + Express + MongoDB microservices |
+| `mongodb-patterns` | Schema design, aggregation, encryption |
+| `microservices-patterns` | Service communication, API gateway, Docker Compose |
+| `devops-loadtesting` | k6, Locust, monitoring, CI/CD pipelines |
+| `devops-scheduling` | Frappe scheduler, PM2, Supervisor, cron, health checks |
+| `github-analytics` | GitHub CLI, PR velocity, DORA metrics, team reports |
+| `postgres-frappe-patterns` | PostgreSQL optimization for Frappe |
+| `knowledge-base` | Team knowledge base setup, CLAUDE.md templates, onboarding |
+| `documentation-workflow` | API docs, user guides, release notes, runbooks |
+
+**Templates and Guides**
+
+| File | Purpose |
+|------|---------|
+| `docs/templates/CLAUDE_TEMPLATE.md` | Generator prompt for creating CLAUDE.md in any repo |
+| `docs/templates/SKILL_TEMPLATE.md` | Standardized template for authoring new skills |
+| `docs/templates/evals-template.json` | Skill evaluation test framework (trigger/output/quality/safety) |
+| `docs/templates/spec-template.md` | Technical spec skeleton (13 sections + 3 appendices) |
+| `docs/templates/tooling-reference.md` | ECC + Autoresearch + Paperclip install and usage reference |
+| `docs/guides/vibe-coding-how-to.md` | Practical guide for non-technical vibe coders |
+| `docs/guides/skill-authoring-standards.md` | How to write, test, version, and maintain skills |
+| `docs/guides/deploycontrol-quick-ref.md` | Deploy Control reference for GitHub tokens and access |
+
+### Contributors
+
+| Who | What They Built |
+|-----|----------------|
+| **Affaan Mustafa** (community) | Original Everything Claude Code — 120+ skills, hooks, commands, agents, rules |
+| **Ankit Jangir** (Dhwani RIS) | 13 DRIS technical skills, 2 Frappe agents, 5 rules, company context, safety guardrails |
+| **Nihaan Mohammed** (Dhwani RIS) | 7 domain skills, 7 design skills, 16 product workflow skills, templates, guides |
+| **Swapnil** (Dhwani RIS, Founder) | BRD-to-implementation-spec skill, spec template, tooling reference |
+
+---
+
+## License
+
+This repository contains content under **two separate licenses**:
+
+### Upstream Content — MIT License
+
+All community skills, agents, hooks, commands, and rules from [affaan-m/everything-claude-code](https://github.com/affaan-m/everything-claude-code) are licensed under the MIT License by Affaan Mustafa. See [LICENSE](LICENSE) for the full text.
+
+### DRIS Domain Knowledge — Proprietary
+
+The following files are **proprietary and confidential** to Dhwani Rural Information Systems Pvt. Ltd. They may not be copied, distributed, modified, or used outside of Dhwani RIS without explicit written permission.
+
+**Domain Knowledge Skills:**
+- `skills/csr-compliance-india/` — India CSR Act compliance framework
+- `skills/fcra-compliance/` — FCRA regulatory compliance
+- `skills/ngo-operations/` — NGO governance and operations
+- `skills/development-sector-grants/` — Grant lifecycle and M&E
+- `skills/grant-management-operations/` — Fund flow and financial compliance
+- `skills/data-mis-design/` — MIS design for development programs
+
+**Product-Specific Skills:**
+- `skills/dris-mgrant-donor/` — mGrant Donor product context
+- `skills/dris-mgrant-csr/` — mGrant CSR module context
+- `skills/dris-mgrant-nuo/` — mGrant NuO product context
+- `skills/dris-mgrant-bulk-upload/` — mGrant data import workflows
+- `skills/dris-mgrant-setup/` — mGrant deployment configuration
+
+```
+Copyright (c) 2026 Dhwani Rural Information Systems Pvt. Ltd.
+All rights reserved.
+
+These materials contain proprietary domain knowledge, product architecture,
+and operational workflows of Dhwani Rural Information Systems Pvt. Ltd.
+Unauthorized copying, distribution, or use is strictly prohibited.
+```
+
+### DRIS Design & Workflow Skills — MIT License
+
+The remaining DRIS additions (design skills, product workflow skills, templates, guides) are copyright Dhwani Rural Information Systems Pvt. Ltd., released under the MIT License:
+
+`skills/dris-feature-spec/`, `skills/dris-technical-pm/`, `skills/dris-business-analyst/`, `skills/dris-email-drafter/`, `skills/dris-weekly-update/`, `skills/dris-release-notes/`, `skills/dris-ticketing/`, `skills/dris-pr-raiser/`, `skills/dris-product-docs/`, `skills/dris-frappe-doctype/`, `skills/dris-skill-selector/`, `skills/brd-to-implementation-spec/`, `skills/frontend-designer/`, `skills/ux-reviewer/`, `skills/accessibility-auditor/`, `skills/react-composition-patterns/`, `skills/frappe-ui-design/`, `skills/system-architecture/`, `skills/figma-to-powerbi/`, `docs/templates/`, `docs/guides/`
+
+---
+
+## Upstream: Everything Claude Code
+
+> Everything below is from the [upstream repository](https://github.com/affaan-m/everything-claude-code) by Affaan Mustafa. It documents the community's 120+ skills, agents, hooks, commands, and rules that form the foundation of this fork.
+
+---
+
+**Language:** English | [简体中文](README.zh-CN.md) | [繁體中文](docs/zh-TW/README.md) | [日本語](docs/ja-JP/README.md) | [한국어](docs/ko-KR/README.md)
+
+# Everything Claude Code (Upstream)
+
+[![Stars](https://img.shields.io/github/stars/affaan-m/everything-claude-code?style=flat)](https://github.com/affaan-m/everything-claude-code/stargazers)
+[![Forks](https://img.shields.io/github/forks/affaan-m/everything-claude-code?style=flat)](https://github.com/affaan-m/everything-claude-code/network/members)
+[![Contributors](https://img.shields.io/github/contributors/affaan-m/everything-claude-code?style=flat)](https://github.com/affaan-m/everything-claude-code/graphs/contributors)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
+> **50K+ stars** | **6K+ forks** | **30 contributors** | **5 languages supported** | **Anthropic Hackathon Winner**
 
 **The performance optimization system for AI agent harnesses. From an Anthropic hackathon winner.**
 
