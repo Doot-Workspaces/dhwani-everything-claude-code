@@ -18,7 +18,9 @@ rules/
 ├── python/          # Python specific
 ├── golang/          # Go specific
 ├── swift/           # Swift specific
-└── php/             # PHP specific
+├── php/             # PHP specific
+├── frappe/          # Frappe framework specific
+├── safety/          # AI usage guardrails and code push safety
 ```
 
 - **common/** contains universal principles — no language-specific code examples.

@@ -1,6 +1,6 @@
 # Everything Claude Code (ECC) — Agent Instructions
 
-This is a **production-ready AI coding plugin** providing 27 specialized agents, 109 skills, 57 commands, and automated hook workflows for software development.
+This is a **production-ready AI coding plugin** providing 30 specialized agents, 122 skills, 57 commands, and automated hook workflows for software development.
 
 ## Core Principles
 
@@ -40,6 +40,8 @@ This is a **production-ready AI coding plugin** providing 27 specialized agents,
 | rust-reviewer | Rust code review | Rust projects |
 | rust-build-resolver | Rust build errors | Rust build failures |
 | typescript-reviewer | TypeScript/JavaScript code review | TypeScript/JavaScript projects |
+| frappe-reviewer | Frappe framework code review | Frappe/ERPNext apps, DocTypes, APIs, hooks |
+| angular-node-reviewer | Angular + Node.js/Express code review | Amgrant v2/Form, Angular components, Express APIs, MongoDB |
 
 ## Agent Orchestration
 
