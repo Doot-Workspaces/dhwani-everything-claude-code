@@ -200,9 +200,9 @@ graph LR
 | Person | Affiliation | Contribution |
 |--------|------------|-------------|
 | **Affaan Mustafa** | Community | Everything Claude Code — 120+ base skills, hooks, commands, agents |
-| **Nihaan Mohammed** | Dhwani RIS | 28 skills — domain (6), design (6), product workflows (16) |
 | **Ankit Jangir** | Dhwani RIS | 13 technical skills, 2 Frappe agents, 5 rules, safety guardrails |
 | **Swapnil Agarwal** | Dhwani RIS | BRD-to-implementation-spec, spec template, tooling reference |
+| **Nihaan Mohammed** | Dhwani RIS | 28 skills — domain (6), design (6), product workflows (16) |
 
 ---
 

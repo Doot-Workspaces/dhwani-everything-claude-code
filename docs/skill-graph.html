@@ -128,7 +128,15 @@ footer .credits a:hover{text-decoration:underline}
 .splash-inner .credits-line{margin-top:24px;font-size:11px;color:#A8A29E;line-height:1.6}
 .splash-inner .credits-line strong{color:#57534E;font-weight:600}
 
-@media(max-width:768px){header{padding:0 14px}.search-wrap input{width:150px}.panel{width:100%;right:-100%}.legend{display:none}.splash-inner h1{font-size:26px}.splash-inner .nums{gap:20px}.splash-inner .num-item .n{font-size:26px}}
+/* ── DATA SOURCE INDICATOR ── */
+.data-badge{position:fixed;bottom:52px;right:14px;display:flex;align-items:center;gap:6px;padding:6px 12px;background:rgba(255,255,255,.95);border:1px solid #E7E5E4;border-radius:8px;font-size:10px;font-weight:600;z-index:97;box-shadow:0 2px 8px rgba(0,0,0,.03);letter-spacing:.03em;text-transform:uppercase}
+.data-badge .pulse{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.data-badge.live .pulse{background:#16a34a;box-shadow:0 0 6px #16a34a}
+.data-badge.static .pulse{background:#C8991F}
+.data-badge .src{color:#57534E}
+.data-badge a{color:var(--gold);text-decoration:none;font-weight:500}
+
+@media(max-width:768px){header{padding:0 14px}.search-wrap input{width:150px}.panel{width:100%;right:-100%}.legend{display:none}.splash-inner h1{font-size:26px}.splash-inner .nums{gap:20px}.splash-inner .num-item .n{font-size:26px}.data-badge{display:none}}
 </style>
 </head>
 <body>
@@ -152,8 +160,8 @@ footer .credits a:hover{text-decoration:underline}
     Explore the Skill Graph →
   </button>
   <div class="credits-line">
-    Built on <strong>Everything Claude Code</strong> by Affaan Mustafa
-    <br>DRIS skills by <strong>Nihaan Mohammed</strong>, <strong>Ankit Jangir</strong> &amp; <strong>Swapnil</strong>
+    Built on <strong>Everything Claude Code</strong> by <strong>Affaan Mustafa</strong>
+    <br>Technical backbone by <strong>Ankit Jangir</strong> · Product &amp; domain skills by <strong>Nihaan Mohammed</strong> · BRD pipeline by <strong>Swapnil Agarwal</strong>
   </div>
 </div>
 </div>
@@ -211,6 +219,12 @@ footer .credits a:hover{text-decoration:underline}
   <div class="row"><svg width="22" height="2"><line x1="0" y1="1" x2="22" y2="1" stroke="#C8991F" stroke-width="3.5"/></svg> Golden Path</div>
 </div>
 
+<!-- DATA SOURCE INDICATOR -->
+<div class="data-badge static" id="dataBadge">
+  <span class="pulse"></span>
+  <span class="src" id="dataSrc">Loading...</span>
+</div>
+
 <!-- FOOTER -->
 <footer>
   <div class="stats">
@@ -220,7 +234,7 @@ footer .credits a:hover{text-decoration:underline}
     <span><strong>4</strong> contributors</span>
   </div>
   <div class="credits">
-    Forked from <a href="https://github.com/AffaanGhazzali/everything-claude-code" target="_blank">Everything Claude Code</a> by Affaan Mustafa · Dhwani RIS © 2026
+    Built on <a href="https://github.com/AffaanGhazzali/everything-claude-code" target="_blank">Everything Claude Code</a> by Affaan Mustafa · Technical skills by Ankit Jangir · Dhwani RIS © 2026
   </div>
 </footer>
 
@@ -246,7 +260,7 @@ const ROLES={
   leadership:['dris-skill-selector']
 };
 
-const S=[
+let S=[
 {id:'csr-compliance-india',l:'CSR Compliance\nIndia',c:'domain',d:'Companies Act 2013 §135, Schedule VII, 11 MCA reports, penalties, spend calculation',u:'Indian CSR law, MCA forms, Schedule VII',nu:'Non-India contexts',i:'CSR questions',o:'Legal analysis, compliance guidance',by:'Nihaan Mohammed'},
 {id:'ngo-operations',l:'NGO\nOperations',c:'domain',d:'Trust/Society/Section 8, 12A/80G/FCRA/DARPAN/CSR-1, governance, HR, procurement',u:'NGO governance, registrations',nu:'For-profit companies',i:'NGO structure questions',o:'Registration guidance, governance advice',by:'Nihaan Mohammed'},
 {id:'development-sector-grants',l:'Dev Sector\nGrants',c:'domain',d:'Grant lifecycle (9 stages), Theory of Change, LogFrame, M&E, SDGs, SROI',u:'Program design, M&E planning',nu:'Non-grant projects',i:'Program/grant context',o:'ToC, LogFrame, M&E plan',by:'Nihaan Mohammed'},
@@ -302,7 +316,7 @@ const S=[
 {id:'skill-authoring-standards',l:'Skill\nAuthoring',c:'templates',d:'Frontmatter, evals, semver standards.',u:'Creating new skills',nu:'Using existing skills',i:'Skill idea',o:'Compliant skill file',by:'Nihaan Mohammed'}
 ];
 
-const E=[
+let E=[
 // Domain internal
 {f:'csr-compliance-india',t:'fcra-compliance',y:'cross_references',gp:false},
 {f:'csr-compliance-india',t:'grant-management-operations',y:'cross_references',gp:false},
@@ -711,9 +725,91 @@ document.addEventListener('keydown',e=>{
   if(e.key==='/'&&document.activeElement!==searchInput){e.preventDefault();searchInput.focus()}
 });
 
-// ── Init ──
-render();
-window.addEventListener('resize',()=>{deselect();closePanel();render()});
+// ── Init: try live data from SKILL_GRAPH.json, fall back to embedded ──
+async function init() {
+  const badge = document.getElementById('dataBadge');
+  const badgeSrc = document.getElementById('dataSrc');
+  let liveLoaded = false;
+
+  // Sources to try, in order
+  const sources = [
+    { url: './SKILL_GRAPH.json', label: 'GitHub Pages' },
+    { url: 'https://raw.githubusercontent.com/Doot-Workspaces/dhwani-everything-claude-code/main/docs/SKILL_GRAPH.json', label: 'GitHub Raw' }
+  ];
+
+  for (const src of sources) {
+    try {
+      const resp = await fetch(src.url, { cache: 'no-cache' });
+      if (!resp.ok) continue;
+      const json = await resp.json();
+      if (!json.skills || !json.edges) continue;
+
+      // Transform JSON into S and E format
+      const newS = [];
+      Object.values(json.skills).forEach(sk => {
+        newS.push({
+          id: sk.id,
+          l: sk.label.replace(/ /g, '\n'),  // Two-line labels
+          c: sk.cluster,
+          d: sk.description,
+          u: sk.when_to_use || '',
+          nu: sk.when_not_to_use || '',
+          i: sk.input || '',
+          o: sk.output || '',
+          by: sk.contributor || 'Dhwani RIS',
+          gp: sk.golden_path_order || null,
+          router: sk.is_router || false
+        });
+      });
+
+      const newE = json.edges.map(e => ({
+        f: e.from, t: e.to, y: e.type, gp: e.golden_path || false
+      }));
+
+      // Replace globals
+      S = newS;
+      E = newE;
+      skillMap = {};
+      S.forEach(s => skillMap[s.id] = s);
+
+      // Update badge
+      badge.classList.remove('static');
+      badge.classList.add('live');
+      badgeSrc.innerHTML = `Live · <a href="${src.url}" target="_blank">${src.label}</a> · ${S.length} skills · ${E.length} edges`;
+      liveLoaded = true;
+
+      // Update splash numbers
+      const nums = document.querySelectorAll('.num-item .n');
+      if (nums.length >= 4) {
+        nums[0].textContent = S.length;
+        nums[2].textContent = E.length;
+      }
+      // Update footer stats
+      const stats = document.querySelectorAll('footer .stats strong');
+      if (stats.length >= 2) {
+        stats[1].textContent = S.length;
+        stats[2].textContent = E.length;
+      }
+
+      console.log(`[Skill Graph] Loaded LIVE data from ${src.label}: ${S.length} skills, ${E.length} edges`);
+      break;
+    } catch (err) {
+      console.log(`[Skill Graph] ${src.label} failed:`, err.message);
+    }
+  }
+
+  if (!liveLoaded) {
+    badge.classList.remove('live');
+    badge.classList.add('static');
+    badgeSrc.textContent = `Embedded · ${S.length} skills (update SKILL_GRAPH.json to go live)`;
+    console.log('[Skill Graph] Using embedded fallback data');
+  }
+
+  render();
+}
+
+init();
+window.addEventListener('resize', () => { deselect(); closePanel(); render(); });
 </script>
 </body>
 </html>

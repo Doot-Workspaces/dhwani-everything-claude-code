@@ -110,8 +110,8 @@ Reference material — use at project start or when creating new skills.
 |--------|------------|----------------|
 | **Affaan Mustafa** | Community (Everything Claude Code) | Base repo — 120+ community skills, hooks, commands, agents, rules |
 | **Ankit Jangir** | Dhwani RIS | 13 technical skills, 2 Frappe agents, 5 rules, DRIS company context, safety guardrails |
-| **Nihaan Mohammed** | Dhwani RIS | 6 domain skills, 6 design skills, 16 product workflow skills, templates, guides, skill graph architecture |
 | **Swapnil Agarwal** | Dhwani RIS | BRD-to-implementation-spec skill, spec template, tooling reference — the BRD → Code pipeline |
+| **Nihaan Mohammed** | Dhwani RIS | 6 domain skills, 6 design skills, 16 product workflow skills, templates, guides, skill graph architecture |
 
 *This is a living document. As new skills are added via PR, update this catalog and the corresponding `SKILL_GRAPH.json`.*
 
