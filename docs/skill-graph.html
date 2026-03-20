@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dhwani RIS — Everything AI · Skill Graph</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --maroon:#8B1A1A;--gold:#C8991F;--cream:#FDF8F0;--teal:#2D6A6A;--blue:#1E40AF;
+  --domain-fill:#FEF3C7;--domain-border:#C8991F;--domain-text:#78350F;
+  --design-fill:#CCFBF1;--design-border:#2D6A6A;--design-text:#134E4A;
+  --product-fill:#FEE2E2;--product-border:#8B1A1A;--product-text:#7F1D1D;
+  --builder-fill:#DBEAFE;--builder-border:#1E40AF;--builder-text:#1E3A5F;
+  --template-fill:#F3F4F6;--template-border:#9CA3AF;--template-text:#374151;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:#1C1917;overflow:hidden;height:100vh}
+
+/* ── HEADER ── */
+header{position:fixed;top:0;left:0;right:0;z-index:100;height:64px;background:rgba(253,248,240,.94);backdrop-filter:blur(14px);border-bottom:1px solid #E7E5E4;display:flex;align-items:center;justify-content:space-between;padding:0 28px}
+.brand{display:flex;align-items:center;gap:14px}
+.brand .mark{width:34px;height:34px;background:var(--maroon);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--gold);font-family:'Playfair Display',serif;font-weight:800;font-size:17px}
+.brand h1{font-family:'Playfair Display',serif;font-weight:700;font-size:18px;color:var(--maroon);letter-spacing:-.02em}
+.brand h1 span{color:var(--gold);font-weight:400}
+.controls{display:flex;align-items:center;gap:10px}
+.search-wrap{position:relative}
+.search-wrap input{width:220px;height:38px;padding:0 14px 0 36px;border:1px solid #E7E5E4;border-radius:9px;background:#fff;font-family:inherit;font-size:13px;outline:none;transition:.2s}
+.search-wrap input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(200,153,31,.1)}
+.search-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#A8A29E;pointer-events:none}
+.search-results{position:absolute;top:44px;left:0;right:0;background:#fff;border:1px solid #E7E5E4;border-radius:9px;box-shadow:0 8px 28px rgba(0,0,0,.08);max-height:260px;overflow-y:auto;display:none;z-index:200}
+.search-results.show{display:block}
+.sr-item{padding:9px 14px;cursor:pointer;border-bottom:1px solid #f5f5f4;font-size:13px;transition:.12s}
+.sr-item:hover{background:var(--cream)}
+.sr-item b{font-weight:600}
+.sr-item small{color:#78716C;display:block;margin-top:1px;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+select.role{height:38px;padding:0 28px 0 12px;border:1px solid #E7E5E4;border-radius:9px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath d='M2 4l3 3 3-3' fill='none' stroke='%23A8A29E' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 10px center;font-family:inherit;font-size:13px;outline:none;appearance:none;cursor:pointer;transition:.2s}
+select.role:focus{border-color:var(--gold)}
+
+/* ── TOOLBAR ── */
+.toolbar{position:fixed;top:64px;left:0;right:0;z-index:99;height:46px;background:rgba(253,248,240,.88);backdrop-filter:blur(10px);border-bottom:1px solid #E7E5E4;display:flex;align-items:center;justify-content:center;gap:7px}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:5px 13px;border:1.5px solid #E7E5E4;border-radius:7px;background:#fff;font-size:12px;font-weight:500;color:#57534E;cursor:pointer;transition:.2s;user-select:none}
+.pill .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.pill.on{background:#1C1917;color:#fff;border-color:#1C1917}
+.pill:hover:not(.on){border-color:#A8A29E}
+.gp-pill{display:inline-flex;align-items:center;gap:5px;padding:5px 13px;border:1.5px solid var(--gold);border-radius:7px;background:#fff;font-size:12px;font-weight:600;color:var(--gold);cursor:pointer;transition:.2s;user-select:none;margin-left:6px}
+.gp-pill.on{background:var(--gold);color:#fff}
+
+/* ── GRAPH ── */
+.graph-area{position:fixed;top:110px;left:0;right:0;bottom:42px}
+.graph-area svg{width:100%;height:100%}
+
+/* cluster regions */
+.cluster-region{opacity:.35;transition:opacity .3s}
+.cluster-region:hover{opacity:.5}
+.cluster-label{font-family:'Playfair Display',serif;font-weight:700;font-size:13px;letter-spacing:.02em;opacity:.6;pointer-events:none}
+
+/* nodes */
+.node{cursor:pointer;transition:opacity .25s}
+.node circle,.node rect,.node polygon{transition:filter .2s,stroke-width .2s}
+.node:hover circle,.node:hover rect,.node:hover polygon{filter:drop-shadow(0 0 10px var(--glow))}
+.node text{font-family:'DM Sans',sans-serif;font-size:10px;font-weight:600;pointer-events:none;text-anchor:middle}
+.node .gp-badge{font-size:8px;font-weight:700;fill:#fff}
+
+/* edges */
+.edge-line{fill:none;stroke-linecap:round;transition:opacity .25s,stroke-width .25s}
+.etype-cross_references{stroke-dasharray:3 3;stroke-width:1}
+.etype-enhances{stroke-dasharray:6 3;stroke-width:1.3}
+.etype-requires{stroke-width:1.8}
+.etype-hands_off_to{stroke-width:2}
+@keyframes goldFlow{from{stroke-dashoffset:20}to{stroke-dashoffset:0}}
+.edge-golden-active{stroke:var(--gold)!important;stroke-width:3.5!important;stroke-dasharray:10 10;animation:goldFlow .8s linear infinite}
+
+/* tooltip */
+.tip{position:fixed;padding:11px 15px;background:#fff;border:1px solid #E7E5E4;border-radius:9px;box-shadow:0 6px 24px rgba(0,0,0,.09);pointer-events:none;z-index:300;opacity:0;transition:opacity .12s;max-width:260px;font-size:12px;line-height:1.45}
+.tip.on{opacity:1}
+.tip b{font-size:13px;display:block;margin-bottom:3px}
+.tip .badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-top:5px}
+
+/* ── DETAIL PANEL ── */
+.panel{position:fixed;top:110px;right:-420px;width:400px;bottom:42px;background:#FFFDF8;border-left:1px solid #E7E5E4;box-shadow:-6px 0 28px rgba(0,0,0,.05);z-index:98;transition:right .3s cubic-bezier(.4,0,.2,1);overflow-y:auto;padding:28px}
+.panel.open{right:0}
+.panel .close{position:absolute;top:14px;right:14px;width:30px;height:30px;border:none;background:#E7E5E4;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#57534E;transition:.15s;font-size:16px}
+.panel .close:hover{background:#1C1917;color:#fff}
+.panel .cat{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:5px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.panel h2{font-family:'Playfair Display',serif;font-weight:700;font-size:22px;margin:14px 0 6px;letter-spacing:-.02em}
+.panel .desc{font-size:14px;line-height:1.6;color:#57534E;margin-bottom:20px}
+.panel .section{margin-bottom:18px}
+.panel .section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#A8A29E;margin-bottom:6px}
+.panel .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.panel .do-box{padding:10px;border-radius:7px;font-size:12px;line-height:1.5}
+.panel .do-box.do{background:#F0FDF4;border:1px solid #BBF7D0;color:#166534}
+.panel .do-box.dont{background:#FEF2F2;border:1px solid #FECACA;color:#991B1B}
+.panel .do-box .lbl{font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.panel .chips{display:flex;flex-wrap:wrap;gap:5px}
+.panel .chip{padding:3px 9px;border-radius:5px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid #E7E5E4;background:#fff;transition:.15s}
+.panel .chip:hover{transform:translateY(-1px);box-shadow:0 2px 6px rgba(0,0,0,.05)}
+.panel .contrib{font-size:12px;color:#A8A29E;font-style:italic;margin-top:18px;padding-top:14px;border-top:1px solid #E7E5E4}
+
+/* ── FOOTER ── */
+footer{position:fixed;bottom:0;left:0;right:0;z-index:99;height:42px;background:rgba(253,248,240,.92);backdrop-filter:blur(10px);border-top:1px solid #E7E5E4;display:flex;align-items:center;justify-content:space-between;padding:0 28px;font-size:11px;color:#A8A29E}
+footer .stats{display:flex;gap:24px}
+footer .stats strong{color:#57534E}
+footer .credits a{color:var(--gold);text-decoration:none}
+footer .credits a:hover{text-decoration:underline}
+
+/* ── LEGEND ── */
+.legend{position:fixed;bottom:52px;left:14px;background:rgba(255,255,255,.95);border:1px solid #E7E5E4;border-radius:10px;padding:14px;z-index:97;font-size:10px;box-shadow:0 3px 12px rgba(0,0,0,.03)}
+.legend h4{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#A8A29E;margin-bottom:8px}
+.legend .row{display:flex;align-items:center;gap:7px;margin-bottom:5px;color:#57534E}
+.legend .row svg{flex-shrink:0}
+
+/* ── SPLASH ── */
+.splash{position:fixed;inset:0;background:rgba(253,248,240,.98);z-index:500;display:flex;align-items:center;justify-content:center;transition:opacity .5s,visibility .5s}
+.splash.gone{opacity:0;visibility:hidden;pointer-events:none}
+.splash-inner{text-align:center;max-width:540px;padding:28px}
+.splash-inner .mark{width:56px;height:56px;background:var(--maroon);border-radius:14px;display:inline-flex;align-items:center;justify-content:center;color:var(--gold);font-family:'Playfair Display',serif;font-weight:800;font-size:28px;margin-bottom:20px}
+.splash-inner h1{font-family:'Playfair Display',serif;font-weight:800;font-size:36px;color:var(--maroon);letter-spacing:-.03em;margin-bottom:6px}
+.splash-inner h1 em{color:var(--gold);font-style:normal}
+.splash-inner .sub{font-size:15px;color:#78716C;margin-bottom:28px;line-height:1.65}
+.splash-inner .nums{display:flex;justify-content:center;gap:36px;margin-bottom:32px}
+.splash-inner .num-item .n{font-family:'Playfair Display',serif;font-weight:800;font-size:32px;color:#1C1917;line-height:1}
+.splash-inner .num-item .l{font-size:11px;font-weight:600;color:#A8A29E;text-transform:uppercase;letter-spacing:.05em;margin-top:3px}
+.splash-inner .enter{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;background:var(--maroon);color:#fff;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:.25s}
+.splash-inner .enter:hover{background:#6B1414;transform:translateY(-2px);box-shadow:0 8px 20px rgba(139,26,26,.22)}
+.splash-inner .credits-line{margin-top:24px;font-size:11px;color:#A8A29E;line-height:1.6}
+.splash-inner .credits-line strong{color:#57534E;font-weight:600}
+
+/* ── DATA SOURCE INDICATOR ── */
+.data-badge{position:fixed;bottom:52px;right:14px;display:flex;align-items:center;gap:6px;padding:6px 12px;background:rgba(255,255,255,.95);border:1px solid #E7E5E4;border-radius:8px;font-size:10px;font-weight:600;z-index:97;box-shadow:0 2px 8px rgba(0,0,0,.03);letter-spacing:.03em;text-transform:uppercase}
+.data-badge .pulse{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.data-badge.live .pulse{background:#16a34a;box-shadow:0 0 6px #16a34a}
+.data-badge.static .pulse{background:#C8991F}
+.data-badge .src{color:#57534E}
+.data-badge a{color:var(--gold);text-decoration:none;font-weight:500}
+
+@media(max-width:768px){header{padding:0 14px}.search-wrap input{width:150px}.panel{width:100%;right:-100%}.legend{display:none}.splash-inner h1{font-size:26px}.splash-inner .nums{gap:20px}.splash-inner .num-item .n{font-size:26px}.data-badge{display:none}}
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div class="splash" id="splash">
+<div class="splash-inner">
+  <div class="mark">D</div>
+  <h1>Everything <em>AI</em></h1>
+  <div class="sub">
+    49 AI agent skills mapping India's social sector compliance, product engineering, and design standards into a navigable intelligence layer.
+    <br>Built by Dhwani RIS. Powered by the community.
+  </div>
+  <div class="nums">
+    <div class="num-item"><div class="n">49</div><div class="l">Skills</div></div>
+    <div class="num-item"><div class="n">5</div><div class="l">Clusters</div></div>
+    <div class="num-item"><div class="n">39</div><div class="l">Edges</div></div>
+    <div class="num-item"><div class="n">10</div><div class="l">Golden Path</div></div>
+  </div>
+  <button class="enter" onclick="document.getElementById('splash').classList.add('gone')">
+    Explore the Skill Graph →
+  </button>
+  <div class="credits-line">
+    Built on <strong>Everything Claude Code</strong> by <strong>Affaan Mustafa</strong>
+    <br>Technical backbone by <strong>Ankit Jangir</strong> · Product &amp; domain skills by <strong>Nihaan Mohammed</strong> · BRD pipeline by <strong>Swapnil Agarwal</strong>
+  </div>
+</div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="brand">
+    <div class="mark">D</div>
+    <h1>Everything AI <span>· Skill Graph</span></h1>
+  </div>
+  <div class="controls">
+    <div class="search-wrap">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.3"/><path d="M9.5 9.5l3 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      <input id="search" placeholder="Search skills… ( / )" autocomplete="off">
+      <div class="search-results" id="searchDrop"></div>
+    </div>
+    <select class="role" id="roleFilter">
+      <option value="all">All Roles</option>
+      <option value="pm">Product Manager</option>
+      <option value="ba">Business Analyst</option>
+      <option value="engineer">Engineer</option>
+      <option value="qa">QA Engineer</option>
+      <option value="designer">Designer</option>
+      <option value="leadership">Leadership</option>
+    </select>
+  </div>
+</header>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <button class="pill on" data-c="domain" onclick="tog(this)"><span class="dot" style="background:var(--domain-border)"></span>Domain</button>
+  <button class="pill on" data-c="design" onclick="tog(this)"><span class="dot" style="background:var(--design-border)"></span>Design</button>
+  <button class="pill on" data-c="product" onclick="tog(this)"><span class="dot" style="background:var(--product-border)"></span>Product</button>
+  <button class="pill on" data-c="builder" onclick="tog(this)"><span class="dot" style="background:var(--builder-border)"></span>Builder</button>
+  <button class="pill on" data-c="templates" onclick="tog(this)"><span class="dot" style="background:var(--template-border)"></span>Templates</button>
+  <button class="gp-pill" id="gpBtn" onclick="togGP()">★ Golden Path</button>
+</div>
+
+<!-- GRAPH -->
+<div class="graph-area" id="graphArea"></div>
+
+<!-- DETAIL PANEL -->
+<div class="panel" id="panel"><button class="close" onclick="closePanel()">✕</button><div id="panelBody"></div></div>
+
+<!-- TOOLTIP -->
+<div class="tip" id="tip"></div>
+
+<!-- LEGEND -->
+<div class="legend">
+  <h4>Edges</h4>
+  <div class="row"><svg width="22" height="2"><line x1="0" y1="1" x2="22" y2="1" stroke="#8B1A1A" stroke-width="2.2"/></svg> Hands off to</div>
+  <div class="row"><svg width="22" height="2"><line x1="0" y1="1" x2="22" y2="1" stroke="#1E40AF" stroke-width="1.8"/></svg> Requires</div>
+  <div class="row"><svg width="22" height="2"><line x1="0" y1="1" x2="22" y2="1" stroke="#2D6A6A" stroke-width="1.3" stroke-dasharray="6 3"/></svg> Enhances</div>
+  <div class="row"><svg width="22" height="2"><line x1="0" y1="1" x2="22" y2="1" stroke="#9CA3AF" stroke-width="1" stroke-dasharray="3 3"/></svg> Cross-refs</div>
+  <div class="row"><svg width="22" height="2"><line x1="0" y1="1" x2="22" y2="1" stroke="#C8991F" stroke-width="3.5"/></svg> Golden Path</div>
+</div>
+
+<!-- DATA SOURCE INDICATOR -->
+<div class="data-badge static" id="dataBadge">
+  <span class="pulse"></span>
+  <span class="src" id="dataSrc">Loading...</span>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="stats">
+    <span><strong>152</strong> total skills</span>
+    <span><strong>49</strong> DRIS-built</span>
+    <span><strong>39</strong> connections</span>
+    <span><strong>4</strong> contributors</span>
+  </div>
+  <div class="credits">
+    Built on <a href="https://github.com/AffaanGhazzali/everything-claude-code" target="_blank">Everything Claude Code</a> by Affaan Mustafa · Technical skills by Ankit Jangir · Dhwani RIS © 2026
+  </div>
+</footer>
+
+<script>
+// ════════════════════════════════════════════════════════════════
+//  DATA — all 49 skills + 39 edges
+// ════════════════════════════════════════════════════════════════
+const CC={
+  domain:{fill:'#FEF3C7',border:'#C8991F',text:'#78350F',label:'Domain Knowledge'},
+  design:{fill:'#CCFBF1',border:'#2D6A6A',text:'#134E4A',label:'Design Skills'},
+  product:{fill:'#FEE2E2',border:'#8B1A1A',text:'#7F1D1D',label:'Product Workflows'},
+  builder:{fill:'#DBEAFE',border:'#1E40AF',text:'#1E3A5F',label:'Builder / Technical'},
+  templates:{fill:'#F3F4F6',border:'#9CA3AF',text:'#374151',label:'Templates & Guides'}
+};
+const EC={hands_off_to:'#8B1A1A',requires:'#1E40AF',enhances:'#2D6A6A',cross_references:'#9CA3AF'};
+const GP=['dris-business-analyst','dris-feature-spec','dris-technical-pm','brd-to-implementation-spec','dris-frappe-doctype','frappe-development','qa-testing','dris-pr-raiser','dris-release-notes','dris-email-drafter'];
+const ROLES={
+  pm:['dris-feature-spec','dris-skill-selector','dris-technical-pm','dris-business-analyst','dris-email-drafter','dris-weekly-update','dris-release-notes','dris-ticketing','dris-product-docs','brd-to-implementation-spec','dris-mgrant-donor','dris-mgrant-csr','dris-mgrant-nuo'],
+  ba:['dris-business-analyst','dris-feature-spec','dris-skill-selector','csr-compliance-india','ngo-operations','development-sector-grants','grant-management-operations','fcra-compliance','data-mis-design'],
+  engineer:['frappe-development','dris-frappe-doctype','brd-to-implementation-spec','qa-testing','dris-pr-raiser','dris-mgrant-setup','dris-mgrant-bulk-upload','angular-node-patterns','mongodb-patterns','microservices-patterns','postgres-frappe-patterns','devops-loadtesting','devops-scheduling'],
+  qa:['qa-testing','ux-reviewer','accessibility-auditor','govt-csr-compliance'],
+  designer:['frontend-designer','frappe-ui-design','figma-to-powerbi','ux-reviewer','accessibility-auditor','react-composition-patterns','system-architecture'],
+  leadership:['dris-skill-selector']
+};
+
+let S=[
+{id:'csr-compliance-india',l:'CSR Compliance\nIndia',c:'domain',d:'Companies Act 2013 §135, Schedule VII, 11 MCA reports, penalties, spend calculation',u:'Indian CSR law, MCA forms, Schedule VII',nu:'Non-India contexts',i:'CSR questions',o:'Legal analysis, compliance guidance',by:'Nihaan Mohammed'},
+{id:'ngo-operations',l:'NGO\nOperations',c:'domain',d:'Trust/Society/Section 8, 12A/80G/FCRA/DARPAN/CSR-1, governance, HR, procurement',u:'NGO governance, registrations',nu:'For-profit companies',i:'NGO structure questions',o:'Registration guidance, governance advice',by:'Nihaan Mohammed'},
+{id:'development-sector-grants',l:'Dev Sector\nGrants',c:'domain',d:'Grant lifecycle (9 stages), Theory of Change, LogFrame, M&E, SDGs, SROI',u:'Program design, M&E planning',nu:'Non-grant projects',i:'Program/grant context',o:'ToC, LogFrame, M&E plan',by:'Nihaan Mohammed'},
+{id:'grant-management-operations',l:'Grant Mgmt\nOps',c:'domain',d:'Fund flow, UCs, SoEs, fund requests, budget management, multi-donor apportionment',u:'Fund flow, UCs, SoEs, budgets',nu:'Conceptual program design',i:'Financial/operational questions',o:'Procedures, formats, checklists',by:'Nihaan Mohammed'},
+{id:'fcra-compliance',l:'FCRA\nCompliance',c:'domain',d:'FCRA 2010 + 2020, designated SBI account, 20% admin cap, FC-4/FC-6, sub-granting ban',u:'Foreign funding, FCRA registration',nu:'Domestic-only funding',i:'FCRA questions',o:'Compliance guidance, reporting',by:'Nihaan Mohammed'},
+{id:'data-mis-design',l:'Data & MIS\nDesign',c:'domain',d:'ODK, KoBoToolbox, mForm, MIS design, dashboards, data governance, DPDP Act',u:'Data collection systems, MIS',nu:'Non-data tasks',i:'Data/MIS requirements',o:'System design, indicator frameworks',by:'Nihaan Mohammed'},
+
+{id:'frontend-designer',l:'Frontend\nDesigner',c:'design',d:'Anti-AI-slop design, 30+ aesthetic tones, brand defaults, design thinking',u:'Any new UI work, dashboards',nu:'Backend work; Frappe-only UI',i:'Design requirements',o:'Production-ready UI code',by:'Nihaan Mohammed'},
+{id:'ux-reviewer',l:'UX\nReviewer',c:'design',d:'10-priority UX review, PASS/FAIL scoring per category',u:'Reviewing existing UI quality',nu:'Building new UI',i:'File paths to review',o:'PASS/FAIL findings',by:'Nihaan Mohammed'},
+{id:'accessibility-auditor',l:'Accessibility\nAuditor',c:'design',d:'WCAG 2.1 AA audit/fix, contrast calc, auto-fix, brand validation',u:'WCAG compliance',nu:'Non-UI work',i:'File paths to audit',o:'Violation report + fixes',by:'Nihaan Mohammed'},
+{id:'react-composition-patterns',l:'React\nPatterns',c:'design',d:'Compound components, providers, React 19, boolean prop elimination',u:'Refactoring React with anti-patterns',nu:'Vue/Angular/Svelte',i:'React code',o:'Refactored components',by:'Nihaan Mohammed'},
+{id:'frappe-ui-design',l:'Frappe UI\nDesign',c:'design',d:'ui.frappe.io components, light theme, Dhwani brand, module scaffolding',u:'Frappe-based product UIs',nu:'Non-Frappe projects',i:'Screen requirements',o:'Frappe component code',by:'Nihaan Mohammed'},
+{id:'system-architecture',l:'System\nArchitecture',c:'design',d:'5-pillar thinking, 20-question framework, AI-aware decomposition',u:'Architecture decisions',nu:'Simple CRUD apps',i:'Architecture questions',o:'Decision doc + trade-offs',by:'Nihaan Mohammed'},
+{id:'figma-to-powerbi',l:'Figma →\nPowerBI',c:'design',d:'Figma dashboard → PowerBI: theme JSON, layout spec, PBIR, DAX measures',u:'Converting Figma to PowerBI',nu:'Non-PowerBI targets',i:'Figma design',o:'Theme JSON, PBIR scaffolding',by:'Nihaan Mohammed'},
+
+{id:'dris-business-analyst',l:'Business\nAnalyst',c:'product',d:'Client inputs → BRD + Requirements Matrix. Structures calls, emails, MOMs.',u:'Client call/email needs structuring',nu:'Already structured requirements',i:'Raw client inputs',o:'BRD + Requirements Matrix',by:'Nihaan Mohammed',gp:1},
+{id:'dris-feature-spec',l:'Feature\nSpec',c:'product',d:'Idea → Structured .docx spec from raw ideas, user stories, client input.',u:'PM has an idea to spec',nu:'Engineer already has spec',i:'Raw idea, user stories',o:'.docx feature spec',by:'Nihaan Mohammed',gp:2},
+{id:'dris-technical-pm',l:'Technical\nPM',c:'product',d:'Spec → Solution architecture (COVE). Architect + data designer + PM.',u:'Spec needs solution architecture',nu:'No spec exists yet',i:'Feature spec',o:'Solution architecture',by:'Nihaan Mohammed',gp:3},
+{id:'brd-to-implementation-spec',l:'BRD →\nImpl Spec',c:'product',d:'BRD → Claude Code-ready tech spec (6 phases). For Frappe v16 + Flutter.',u:'BRD needs tech spec',nu:'No BRD; non-Frappe',i:'BRD document',o:'Frappe v16 tech spec',by:'Swapnil',gp:4},
+{id:'dris-frappe-doctype',l:'Frappe\nDocType',c:'product',d:'Spec → DocType JSON with workflows, permissions, approval chains.',u:'Designing DocTypes, workflows',nu:'Writing Python/JS code',i:'Spec or requirements',o:'DocType JSON, workflow defs',by:'Nihaan Mohammed',gp:5},
+{id:'dris-pr-raiser',l:'PR\nRaiser',c:'product',d:'Code → Clean GitHub PR with description and test plan.',u:'Code ready, needs PR',nu:'Code not written yet',i:'Completed changes',o:'GitHub PR',by:'Nihaan Mohammed',gp:8},
+{id:'dris-product-docs',l:'Product\nDocs',c:'product',d:'Feature → Frappe Wiki chapters for user documentation.',u:'Feature needs docs',nu:'API docs',i:'Completed feature',o:'Wiki .md chapters',by:'Nihaan Mohammed'},
+{id:'dris-email-drafter',l:'Email\nDrafter',c:'product',d:'Context → Pattern-based client email for Outlook.',u:'Client updates needed',nu:'Internal comms',i:'Context, purpose',o:'Draft email',by:'Nihaan Mohammed',gp:10},
+{id:'dris-weekly-update',l:'Weekly\nUpdate',c:'product',d:'Git + Linear → .docx weekly report from real commits.',u:'Friday reports',nu:'Ad-hoc updates',i:'Git log + Linear',o:'.docx report',by:'Nihaan Mohammed'},
+{id:'dris-release-notes',l:'Release\nNotes',c:'product',d:'Git + Linear → Internal notes + customer email.',u:'Release ready to announce',nu:'Pre-release',i:'Git log + Linear',o:'Release notes',by:'Nihaan Mohammed',gp:9},
+{id:'dris-ticketing',l:'Ticketing',c:'product',d:'Spec → Linear tickets (batch) from feature specs.',u:'Spec needs tickets',nu:'No spec yet',i:'Feature spec',o:'Linear tickets',by:'Nihaan Mohammed'},
+{id:'dris-skill-selector',l:'Skill\nSelector',c:'product',d:'Central router — dispatches to the right skill for any task.',u:'Unsure which skill',nu:'Already know which',i:'Task description',o:'Skill + execution order',by:'Nihaan Mohammed',router:true},
+{id:'dris-mgrant-donor',l:'mGrant\nDonor',c:'product',d:'40+ DocTypes, 5 grant flows. Complete donor platform context.',u:'mGrant Donor work',nu:'Non-mGrant',i:'Donor questions',o:'Product context, flows',by:'Nihaan Mohammed'},
+{id:'dris-mgrant-csr',l:'mGrant\nCSR',c:'product',d:'MCA §135, budget lifecycle. CSR module compliance.',u:'mGrant CSR module',nu:'Non-CSR',i:'CSR questions',o:'MCA context, lifecycle',by:'Nihaan Mohammed'},
+{id:'dris-mgrant-nuo',l:'mGrant\nNuO',c:'product',d:'NGO grants, sub-grants, FCRA. NGO-facing platform.',u:'mGrant NuO work',nu:'Non-NuO',i:'NuO questions',o:'NGO grant context',by:'Nihaan Mohammed'},
+{id:'dris-mgrant-bulk-upload',l:'mGrant\nBulk Upload',c:'product',d:'PREP-MAP-SAMPLE-EXECUTE with PM gates for safe import.',u:'Data import, migration',nu:'Small data entry',i:'Data to import',o:'Gated bulk import',by:'Nihaan Mohammed'},
+{id:'dris-mgrant-setup',l:'mGrant\nSetup',c:'product',d:'11-phase configuration for new deployments.',u:'New deployment / onboarding',nu:'Stable deployment',i:'Setup requirements',o:'11-phase config',by:'Nihaan Mohammed'},
+
+{id:'frappe-development',l:'Frappe\nDevelopment',c:'builder',d:'500 lines of battle-tested patterns: DocType, API security, hooks, testing.',u:'ALL Frappe code',nu:'Non-Frappe',i:'Dev task',o:'Production Frappe code',by:'Ankit Jangir',gp:6},
+{id:'qa-testing',l:'QA\nTesting',c:'builder',d:'Playwright E2E, POM, CI, permission testing — 569 lines.',u:'E2E test setup',nu:'Unit tests only',i:'Code to test',o:'E2E suite + POM',by:'Ankit Jangir',gp:7},
+{id:'pm-workflow',l:'PM\nWorkflow',c:'builder',d:'Figma-to-code, walkthrough generation, demo prep.',u:'Demo preparation',nu:'Non-PM tasks',i:'Demo requirements',o:'Demo materials',by:'Ankit Jangir'},
+{id:'angular-node-patterns',l:'Angular\n+ Node',c:'builder',d:'Angular + Express + MongoDB microservices patterns.',u:'Angular/Express projects',nu:'Frappe/Python',i:'Dev task',o:'Microservice patterns',by:'Ankit Jangir'},
+{id:'mongodb-patterns',l:'MongoDB\nPatterns',c:'builder',d:'Schema design, aggregation, encryption.',u:'MongoDB projects',nu:'SQL/MariaDB',i:'DB requirements',o:'Schema + query patterns',by:'Ankit Jangir'},
+{id:'microservices-patterns',l:'Micro-\nservices',c:'builder',d:'Service communication, API gateway patterns.',u:'Multi-service architecture',nu:'Monolithic apps',i:'Architecture needs',o:'Communication patterns',by:'Ankit Jangir'},
+{id:'devops-loadtesting',l:'Load\nTesting',c:'builder',d:'k6, Locust, monitoring — performance testing.',u:'Performance validation',nu:'Functional testing',i:'Perf requirements',o:'Load test scripts',by:'Ankit Jangir'},
+{id:'devops-scheduling',l:'Scheduling',c:'builder',d:'Frappe scheduler, PM2, cron patterns.',u:'Background jobs',nu:'Real-time ops',i:'Scheduling needs',o:'Config patterns',by:'Ankit Jangir'},
+{id:'github-analytics',l:'GitHub\nAnalytics',c:'builder',d:'GitHub CLI, DORA metrics tracking.',u:'Engineering metrics',nu:'Non-GitHub',i:'Metrics needs',o:'Analytics scripts',by:'Ankit Jangir'},
+{id:'postgres-frappe-patterns',l:'Postgres\n+ Frappe',c:'builder',d:'PostgreSQL optimization for Frappe.',u:'Query optimization',nu:'MariaDB-only',i:'Perf issues',o:'Optimized queries',by:'Ankit Jangir'},
+{id:'govt-csr-compliance',l:'Tech CSR\nCompliance',c:'builder',d:'Audit trails, PII, RBAC, WCAG — implementation level.',u:'Building compliance in code',nu:'Legal framework',i:'Compliance reqs',o:'Implementation patterns',by:'Ankit Jangir'},
+{id:'knowledge-base',l:'Knowledge\nBase',c:'builder',d:'Team KBs, CLAUDE.md templates.',u:'Project knowledge mgmt',nu:'Individual docs',i:'KB requirements',o:'KB structure',by:'Ankit Jangir'},
+{id:'documentation-workflow',l:'Doc\nWorkflow',c:'builder',d:'API docs, user guides, release notes workflow.',u:'API documentation',nu:'Product docs',i:'Code/feature',o:'Structured docs',by:'Ankit Jangir'},
+
+{id:'claude-template',l:'CLAUDE.md\nTemplate',c:'templates',d:'Generator prompt for CLAUDE.md in any repo.',u:'Start of every new repo',nu:'CLAUDE.md exists',i:'New repo',o:'CLAUDE.md',by:'Ankit Jangir'},
+{id:'evals-template',l:'Evals\nTemplate',c:'templates',d:'Skill evaluation test framework — 3+ cases.',u:'Every new skill',nu:'Non-skill content',i:'Skill to test',o:'Eval test cases',by:'Nihaan Mohammed'},
+{id:'spec-template',l:'Spec\nTemplate',c:'templates',d:'13 sections + 3 appendices — Frappe v16.',u:'Frappe v16 projects',nu:'Non-Frappe',i:'Project reqs',o:'Spec document',by:'Swapnil'},
+{id:'tooling-reference',l:'Tooling\nReference',c:'templates',d:'ECC + Autoresearch + Paperclip setup.',u:'Setting up AI tools',nu:'Already configured',i:'Setup needs',o:'Install guide',by:'Nihaan Mohammed'},
+{id:'vibe-coding-how-to',l:'Vibe Coding\nGuide',c:'templates',d:'Non-technical onboarding to Claude Code.',u:'Onboarding PMs',nu:'Experienced CLI users',i:'New PM',o:'Onboarding flow',by:'Nihaan Mohammed'},
+{id:'skill-authoring-standards',l:'Skill\nAuthoring',c:'templates',d:'Frontmatter, evals, semver standards.',u:'Creating new skills',nu:'Using existing skills',i:'Skill idea',o:'Compliant skill file',by:'Nihaan Mohammed'}
+];
+
+let E=[
+// Domain internal
+{f:'csr-compliance-india',t:'fcra-compliance',y:'cross_references',gp:false},
+{f:'csr-compliance-india',t:'grant-management-operations',y:'cross_references',gp:false},
+{f:'csr-compliance-india',t:'ngo-operations',y:'cross_references',gp:false},
+{f:'csr-compliance-india',t:'development-sector-grants',y:'cross_references',gp:false},
+{f:'fcra-compliance',t:'ngo-operations',y:'cross_references',gp:false},
+{f:'fcra-compliance',t:'grant-management-operations',y:'cross_references',gp:false},
+{f:'development-sector-grants',t:'grant-management-operations',y:'cross_references',gp:false},
+{f:'development-sector-grants',t:'data-mis-design',y:'cross_references',gp:false},
+{f:'ngo-operations',t:'data-mis-design',y:'cross_references',gp:false},
+{f:'grant-management-operations',t:'data-mis-design',y:'cross_references',gp:false},
+// Design internal
+{f:'frontend-designer',t:'ux-reviewer',y:'hands_off_to',gp:false},
+{f:'ux-reviewer',t:'accessibility-auditor',y:'hands_off_to',gp:false},
+{f:'accessibility-auditor',t:'frappe-ui-design',y:'enhances',gp:false},
+{f:'react-composition-patterns',t:'frontend-designer',y:'enhances',gp:false},
+{f:'system-architecture',t:'brd-to-implementation-spec',y:'hands_off_to',gp:false},
+{f:'frontend-designer',t:'figma-to-powerbi',y:'hands_off_to',gp:false},
+{f:'ux-reviewer',t:'figma-to-powerbi',y:'enhances',gp:false},
+// Golden path
+{f:'dris-business-analyst',t:'dris-feature-spec',y:'hands_off_to',gp:true},
+{f:'dris-feature-spec',t:'dris-technical-pm',y:'hands_off_to',gp:true},
+{f:'dris-technical-pm',t:'brd-to-implementation-spec',y:'hands_off_to',gp:true},
+{f:'brd-to-implementation-spec',t:'dris-frappe-doctype',y:'hands_off_to',gp:true},
+{f:'dris-frappe-doctype',t:'frappe-development',y:'hands_off_to',gp:true},
+{f:'frappe-development',t:'qa-testing',y:'hands_off_to',gp:true},
+{f:'qa-testing',t:'dris-pr-raiser',y:'hands_off_to',gp:true},
+{f:'dris-pr-raiser',t:'dris-release-notes',y:'hands_off_to',gp:true},
+{f:'dris-release-notes',t:'dris-email-drafter',y:'hands_off_to',gp:true},
+// Product branches
+{f:'dris-technical-pm',t:'dris-ticketing',y:'hands_off_to',gp:false},
+{f:'dris-feature-spec',t:'dris-ticketing',y:'hands_off_to',gp:false},
+{f:'dris-weekly-update',t:'dris-email-drafter',y:'enhances',gp:false},
+// Cross-cluster
+{f:'dris-mgrant-donor',t:'grant-management-operations',y:'requires',gp:false},
+{f:'dris-mgrant-donor',t:'csr-compliance-india',y:'requires',gp:false},
+{f:'dris-mgrant-csr',t:'csr-compliance-india',y:'requires',gp:false},
+{f:'dris-mgrant-nuo',t:'fcra-compliance',y:'requires',gp:false},
+{f:'dris-mgrant-nuo',t:'ngo-operations',y:'requires',gp:false},
+{f:'brd-to-implementation-spec',t:'system-architecture',y:'requires',gp:false},
+{f:'dris-frappe-doctype',t:'frappe-ui-design',y:'enhances',gp:false},
+{f:'govt-csr-compliance',t:'csr-compliance-india',y:'cross_references',gp:false},
+{f:'dris-mgrant-bulk-upload',t:'data-mis-design',y:'enhances',gp:false}
+];
+
+// ════════════════════════════════════════════════════════════════
+//  PRE-COMPUTED LAYOUT — cluster centers + node positions
+// ════════════════════════════════════════════════════════════════
+function computeLayout(W,H){
+  // Cluster center positions (proportional)
+  const centers={
+    domain:   {x:W*.15, y:H*.42},
+    design:   {x:W*.50, y:H*.82},
+    product:  {x:W*.48, y:H*.35},
+    builder:  {x:W*.85, y:H*.42},
+    templates:{x:W*.85, y:H*.85}
+  };
+
+  const map={};
+  const clusterNodes={};
+  S.forEach(s=>{if(!clusterNodes[s.c])clusterNodes[s.c]=[];clusterNodes[s.c].push(s)});
+
+  Object.entries(clusterNodes).forEach(([cluster,nodes])=>{
+    const cx=centers[cluster].x, cy=centers[cluster].y;
+    const n=nodes.length;
+    // Arrange in ellipse
+    const rx=Math.min(W*.14, 50+n*12);
+    const ry=Math.min(H*.18, 40+n*10);
+    nodes.forEach((s,i)=>{
+      const angle=(2*Math.PI*i/n)-Math.PI/2;
+      map[s.id]={x:cx+rx*Math.cos(angle), y:cy+ry*Math.sin(angle)};
+    });
+  });
+
+  return {positions:map, centers};
+}
+
+// ════════════════════════════════════════════════════════════════
+//  RENDER
+// ════════════════════════════════════════════════════════════════
+const area=document.getElementById('graphArea');
+let W,H,svg,g,positions,centers,skillMap={};
+S.forEach(s=>skillMap[s.id]=s);
+let activeClusters=new Set(['domain','design','product','builder','templates']);
+let gpActive=false, selected=null;
+
+function render(){
+  W=area.clientWidth; H=area.clientHeight;
+  const layout=computeLayout(W,H);
+  positions=layout.positions; centers=layout.centers;
+
+  area.innerHTML='';
+  svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('width',W);svg.setAttribute('height',H);
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  svg.style.cursor='grab';
+  area.appendChild(svg);
+
+  // Zoom + pan via viewBox
+  let vb={x:0,y:0,w:W,h:H};
+  let dragging=false,dragStart={x:0,y:0};
+
+  svg.addEventListener('wheel',e=>{
+    e.preventDefault();
+    const factor=e.deltaY>0?1.08:1/1.08;
+    const rect=svg.getBoundingClientRect();
+    const mx=(e.clientX-rect.left)/rect.width*vb.w+vb.x;
+    const my=(e.clientY-rect.top)/rect.height*vb.h+vb.y;
+    const nw=Math.max(W*.3,Math.min(W*2.5,vb.w*factor));
+    const nh=nw*(H/W);
+    vb.x=mx-(mx-vb.x)*(nw/vb.w);
+    vb.y=my-(my-vb.y)*(nh/vb.h);
+    vb.w=nw;vb.h=nh;
+    svg.setAttribute('viewBox',`${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
+  },{passive:false});
+
+  svg.addEventListener('mousedown',e=>{
+    if(e.target===svg||e.target.tagName==='rect'&&e.target.classList.contains('cr')){
+      dragging=true;dragStart={x:e.clientX,y:e.clientY};svg.style.cursor='grabbing';
+    }
+  });
+  window.addEventListener('mousemove',e=>{
+    if(!dragging)return;
+    const dx=(e.clientX-dragStart.x)*(vb.w/W);
+    const dy=(e.clientY-dragStart.y)*(vb.h/H);
+    vb.x-=dx;vb.y-=dy;
+    dragStart={x:e.clientX,y:e.clientY};
+    svg.setAttribute('viewBox',`${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
+  });
+  window.addEventListener('mouseup',()=>{dragging=false;svg.style.cursor='grab'});
+
+  const defs=document.createElementNS('http://www.w3.org/2000/svg','defs');
+  // Arrow markers
+  Object.entries(EC).forEach(([type,color])=>{
+    const m=document.createElementNS('http://www.w3.org/2000/svg','marker');
+    m.setAttribute('id',`a-${type}`);m.setAttribute('viewBox','0 -4 8 8');
+    m.setAttribute('refX',8);m.setAttribute('refY',0);m.setAttribute('markerWidth',5);m.setAttribute('markerHeight',5);m.setAttribute('orient','auto');
+    const p=document.createElementNS('http://www.w3.org/2000/svg','path');
+    p.setAttribute('d','M0,-4L8,0L0,4');p.setAttribute('fill',color);
+    m.appendChild(p);defs.appendChild(m);
+  });
+  // Golden arrow
+  const gm=document.createElementNS('http://www.w3.org/2000/svg','marker');
+  gm.setAttribute('id','a-gp');gm.setAttribute('viewBox','0 -5 10 10');
+  gm.setAttribute('refX',10);gm.setAttribute('refY',0);gm.setAttribute('markerWidth',6);gm.setAttribute('markerHeight',6);gm.setAttribute('orient','auto');
+  const gp2=document.createElementNS('http://www.w3.org/2000/svg','path');
+  gp2.setAttribute('d','M0,-5L10,0L0,5');gp2.setAttribute('fill','#C8991F');
+  gm.appendChild(gp2);defs.appendChild(gm);
+  svg.appendChild(defs);
+
+  g=document.createElementNS('http://www.w3.org/2000/svg','g');
+  svg.appendChild(g);
+
+  // Cluster regions (subtle rounded rects behind nodes)
+  Object.entries(centers).forEach(([cid,ctr])=>{
+    const nodes=S.filter(s=>s.c===cid);
+    let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
+    nodes.forEach(s=>{const p=positions[s.id];minX=Math.min(minX,p.x);maxX=Math.max(maxX,p.x);minY=Math.min(minY,p.y);maxY=Math.max(maxY,p.y)});
+    const pad=50;
+    const r=document.createElementNS('http://www.w3.org/2000/svg','rect');
+    r.classList.add('cr');
+    r.setAttribute('x',minX-pad);r.setAttribute('y',minY-pad);
+    r.setAttribute('width',maxX-minX+pad*2);r.setAttribute('height',maxY-minY+pad*2);
+    r.setAttribute('rx',16);r.setAttribute('fill',CC[cid].fill);r.setAttribute('opacity',.4);
+    r.setAttribute('stroke',CC[cid].border);r.setAttribute('stroke-width',.5);r.setAttribute('stroke-opacity',.3);
+    g.appendChild(r);
+
+    // Cluster label
+    const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.classList.add('cluster-label');
+    t.setAttribute('x',minX-pad+12);t.setAttribute('y',minY-pad+18);
+    t.setAttribute('fill',CC[cid].text);
+    t.textContent=CC[cid].label;
+    g.appendChild(t);
+  });
+
+  // Draw edges
+  E.forEach(e=>{
+    const from=positions[e.f], to=positions[e.t];
+    if(!from||!to)return;
+    const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+    // Curved edge
+    const dx=to.x-from.x, dy=to.y-from.y;
+    const dist=Math.sqrt(dx*dx+dy*dy);
+    const offset=Math.min(dist*.25,40);
+    const mx=(from.x+to.x)/2, my=(from.y+to.y)/2;
+    // Perpendicular offset for curve
+    const nx=-dy/dist*offset, ny=dx/dist*offset;
+    path.setAttribute('d',`M${from.x},${from.y} Q${mx+nx},${my+ny} ${to.x},${to.y}`);
+    path.classList.add('edge-line',`etype-${e.y}`);
+    path.setAttribute('stroke',EC[e.y]);
+    path.setAttribute('stroke-opacity',.45);
+    path.setAttribute('marker-end',`url(#a-${e.y})`);
+    path.dataset.from=e.f;path.dataset.to=e.t;path.dataset.gp=e.gp;path.dataset.type=e.y;
+    g.appendChild(path);
+  });
+
+  // Draw nodes
+  S.forEach(s=>{
+    const pos=positions[s.id];
+    const col=CC[s.c];
+    const isGP=GP.includes(s.id);
+    const isRouter=s.router;
+
+    const ng=document.createElementNS('http://www.w3.org/2000/svg','g');
+    ng.classList.add('node');ng.dataset.id=s.id;ng.dataset.cluster=s.c;
+    ng.setAttribute('transform',`translate(${pos.x},${pos.y})`);
+    ng.style.setProperty('--glow',col.border);
+
+    const r=isGP?18:isRouter?20:14;
+
+    if(isRouter){
+      // Octagon
+      const pts=[];for(let i=0;i<8;i++){const a=Math.PI/8+i*Math.PI/4;pts.push(`${r*Math.cos(a)},${r*Math.sin(a)}`);}
+      const poly=document.createElementNS('http://www.w3.org/2000/svg','polygon');
+      poly.setAttribute('points',pts.join(' '));
+      poly.setAttribute('fill',col.fill);poly.setAttribute('stroke',col.border);poly.setAttribute('stroke-width',2.5);
+      ng.appendChild(poly);
+    } else {
+      const circ=document.createElementNS('http://www.w3.org/2000/svg','circle');
+      circ.setAttribute('r',r);
+      circ.setAttribute('fill',col.fill);circ.setAttribute('stroke',col.border);
+      circ.setAttribute('stroke-width',isGP?2.5:1.5);
+      ng.appendChild(circ);
+    }
+
+    // GP order badge
+    if(isGP&&s.gp){
+      const badge=document.createElementNS('http://www.w3.org/2000/svg','circle');
+      badge.setAttribute('cx',r*.8);badge.setAttribute('cy',-r*.8);badge.setAttribute('r',7);
+      badge.setAttribute('fill','#C8991F');badge.setAttribute('stroke','#FDF8F0');badge.setAttribute('stroke-width',1.5);
+      ng.appendChild(badge);
+      const bt=document.createElementNS('http://www.w3.org/2000/svg','text');
+      bt.classList.add('gp-badge');bt.setAttribute('x',r*.8);bt.setAttribute('y',-r*.8+3);
+      bt.setAttribute('text-anchor','middle');bt.textContent=s.gp;
+      ng.appendChild(bt);
+    }
+
+    // Label
+    const lines=s.l.split('\n');
+    lines.forEach((line,i)=>{
+      const txt=document.createElementNS('http://www.w3.org/2000/svg','text');
+      txt.setAttribute('y',r+13+i*12);
+      txt.setAttribute('text-anchor','middle');
+      txt.setAttribute('fill',col.text);
+      txt.setAttribute('font-size','10');txt.setAttribute('font-weight','600');
+      txt.setAttribute('font-family','DM Sans, sans-serif');
+      txt.textContent=line;
+      ng.appendChild(txt);
+    });
+
+    // Events
+    ng.addEventListener('mouseenter',ev=>showTip(ev,s));
+    ng.addEventListener('mouseleave',hideTip);
+    ng.addEventListener('click',ev=>{ev.stopPropagation();selectNode(s)});
+
+    g.appendChild(ng);
+  });
+
+  // Click background to deselect
+  svg.addEventListener('click',e=>{if(e.target===svg||e.target.classList.contains('cr')){deselect();closePanel()}});
+}
+
+// ════════════════════════════════════════════════════════════════
+//  INTERACTIONS
+// ════════════════════════════════════════════════════════════════
+function showTip(ev,s){
+  const tip=document.getElementById('tip');
+  const col=CC[s.c];
+  tip.innerHTML=`<b style="color:${col.text}">${s.l.replace(/\n/g,' ')}</b>${s.d}<div class="badge" style="background:${col.fill};color:${col.text};border:1px solid ${col.border}">${CC[s.c].label}</div>`;
+  tip.style.left=(ev.clientX+14)+'px';tip.style.top=(ev.clientY-6)+'px';
+  tip.classList.add('on');
+}
+function hideTip(){document.getElementById('tip').classList.remove('on')}
+
+function selectNode(s){
+  selected=s;hideTip();
+  const connected=new Set([s.id]);
+  const connEdges=[];
+  E.forEach(e=>{if(e.f===s.id||e.t===s.id){connected.add(e.f);connected.add(e.t);connEdges.push(e)}});
+
+  document.querySelectorAll('.node').forEach(n=>{
+    n.style.opacity=connected.has(n.dataset.id)?1:.08;
+  });
+  document.querySelectorAll('.edge-line').forEach(l=>{
+    l.style.opacity=(l.dataset.from===s.id||l.dataset.to===s.id)?.7:.04;
+  });
+  openPanel(s,connEdges);
+}
+
+function deselect(){
+  selected=null;
+  document.querySelectorAll('.node').forEach(n=>n.style.opacity=1);
+  document.querySelectorAll('.edge-line').forEach(l=>l.style.opacity=.45);
+}
+
+function openPanel(s,edges){
+  const p=document.getElementById('panel');
+  const col=CC[s.c];
+  const outE=edges.filter(e=>e.f===s.id);
+  const inE=edges.filter(e=>e.t===s.id);
+
+  document.getElementById('panelBody').innerHTML=`
+    <div class="cat" style="background:${col.fill};color:${col.text};border:1px solid ${col.border}">
+      <span style="width:7px;height:7px;border-radius:50%;background:${col.border};display:inline-block"></span>
+      ${CC[s.c].label}
+    </div>
+    <h2>${s.l.replace(/\n/g,' ')}</h2>
+    <div class="desc">${s.d}</div>
+    <div class="grid2">
+      <div class="do-box do"><div class="lbl">✓ When to use</div>${s.u||'—'}</div>
+      <div class="do-box dont"><div class="lbl">✗ When NOT to use</div>${s.nu||'—'}</div>
+    </div>
+    ${s.i?`<div class="section"><div class="section-title">Input</div><div>${s.i}</div></div>`:''}
+    ${s.o?`<div class="section"><div class="section-title">Output</div><div>${s.o}</div></div>`:''}
+    ${outE.length?`<div class="section"><div class="section-title">Connects to →</div><div class="chips">${outE.map(e=>{
+      const t=skillMap[e.t];const tc=CC[t?.c||'templates'];
+      return `<span class="chip" style="border-color:${tc.border};color:${tc.text}" onclick="navTo('${e.t}')">${t?t.l.replace(/\n/g,' '):e.t}</span>`;
+    }).join('')}</div></div>`:''}
+    ${inE.length?`<div class="section"><div class="section-title">← Receives from</div><div class="chips">${inE.map(e=>{
+      const f=skillMap[e.f];const fc=CC[f?.c||'templates'];
+      return `<span class="chip" style="border-color:${fc.border};color:${fc.text}" onclick="navTo('${e.f}')">${f?f.l.replace(/\n/g,' '):e.f}</span>`;
+    }).join('')}</div></div>`:''}
+    <div class="contrib">Contributed by ${s.by||'Dhwani RIS'}</div>
+  `;
+  p.classList.add('open');
+}
+
+function closePanel(){document.getElementById('panel').classList.remove('open')}
+function navTo(id){const s=skillMap[id];if(s)selectNode(s)}
+
+// ── Cluster toggles ──
+function tog(btn){
+  const c=btn.dataset.c;
+  if(activeClusters.has(c)){activeClusters.delete(c);btn.classList.remove('on')}
+  else{activeClusters.add(c);btn.classList.add('on')}
+  applyFilters();
+}
+
+function applyFilters(){
+  const role=document.getElementById('roleFilter').value;
+  const roleSet=role!=='all'?new Set(ROLES[role]):null;
+
+  document.querySelectorAll('.node').forEach(n=>{
+    const vis=activeClusters.has(n.dataset.cluster)&&(!roleSet||roleSet.has(n.dataset.id));
+    n.style.opacity=vis?1:.06;n.style.pointerEvents=vis?'all':'none';
+  });
+  document.querySelectorAll('.edge-line').forEach(l=>{
+    const fNode=skillMap[l.dataset.from],tNode=skillMap[l.dataset.to];
+    const fVis=fNode&&activeClusters.has(fNode.c)&&(!roleSet||roleSet.has(l.dataset.from));
+    const tVis=tNode&&activeClusters.has(tNode.c)&&(!roleSet||roleSet.has(l.dataset.to));
+    l.style.opacity=(fVis&&tVis)?.45:.03;
+  });
+}
+
+document.getElementById('roleFilter').addEventListener('change',()=>{
+  if(gpActive)togGP();deselect();closePanel();applyFilters();
+});
+
+// ── Golden Path ──
+function togGP(){
+  gpActive=!gpActive;
+  document.getElementById('gpBtn').classList.toggle('on',gpActive);
+  const gpSet=new Set(GP);
+
+  if(gpActive){
+    document.querySelectorAll('.node').forEach(n=>n.style.opacity=gpSet.has(n.dataset.id)?1:.08);
+    document.querySelectorAll('.edge-line').forEach(l=>{
+      if(l.dataset.gp==='true'){
+        l.classList.add('edge-golden-active');l.style.opacity=1;l.setAttribute('marker-end','url(#a-gp)');
+      } else {l.style.opacity=.03;l.classList.remove('edge-golden-active')}
+    });
+  } else {
+    document.querySelectorAll('.node').forEach(n=>n.style.opacity=1);
+    document.querySelectorAll('.edge-line').forEach(l=>{
+      l.classList.remove('edge-golden-active');l.style.opacity=.45;
+      l.setAttribute('marker-end',`url(#a-${l.dataset.type})`);
+    });
+  }
+}
+
+// ── Search ──
+const searchInput=document.getElementById('search');
+const searchDrop=document.getElementById('searchDrop');
+
+searchInput.addEventListener('input',e=>{
+  const q=e.target.value.trim().toLowerCase();
+  if(q.length<2){searchDrop.classList.remove('show');deselect();return}
+  const results=S.filter(s=>s.id.includes(q)||s.l.toLowerCase().includes(q)||s.d.toLowerCase().includes(q)).slice(0,8);
+  if(!results.length){searchDrop.classList.remove('show');return}
+  searchDrop.innerHTML=results.map(s=>`<div class="sr-item" onclick="pickSearch('${s.id}')"><b style="color:${CC[s.c].text}">${s.l.replace(/\n/g,' ')}</b><small>${s.d}</small></div>`).join('');
+  searchDrop.classList.add('show');
+
+  const matchIds=new Set(results.map(r=>r.id));
+  document.querySelectorAll('.node').forEach(n=>n.style.opacity=matchIds.has(n.dataset.id)?1:.1);
+  document.querySelectorAll('.edge-line').forEach(l=>l.style.opacity=.03);
+});
+
+searchInput.addEventListener('blur',()=>setTimeout(()=>searchDrop.classList.remove('show'),180));
+searchInput.addEventListener('keydown',e=>{if(e.key==='Escape'){searchInput.value='';searchDrop.classList.remove('show');deselect();document.querySelectorAll('.node').forEach(n=>n.style.opacity=1);document.querySelectorAll('.edge-line').forEach(l=>l.style.opacity=.45)}});
+
+function pickSearch(id){searchDrop.classList.remove('show');searchInput.value='';document.querySelectorAll('.node').forEach(n=>n.style.opacity=1);document.querySelectorAll('.edge-line').forEach(l=>l.style.opacity=.45);selectNode(skillMap[id])}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closePanel();deselect()}
+  if(e.key==='/'&&document.activeElement!==searchInput){e.preventDefault();searchInput.focus()}
+});
+
+// ── Init: try live data from SKILL_GRAPH.json, fall back to embedded ──
+async function init() {
+  const badge = document.getElementById('dataBadge');
+  const badgeSrc = document.getElementById('dataSrc');
+  let liveLoaded = false;
+
+  // Sources to try, in order
+  const sources = [
+    { url: './SKILL_GRAPH.json', label: 'GitHub Pages' },
+    { url: 'https://raw.githubusercontent.com/Doot-Workspaces/dhwani-everything-claude-code/main/docs/SKILL_GRAPH.json', label: 'GitHub Raw' }
+  ];
+
+  for (const src of sources) {
+    try {
+      const resp = await fetch(src.url, { cache: 'no-cache' });
+      if (!resp.ok) continue;
+      const json = await resp.json();
+      if (!json.skills || !json.edges) continue;
+
+      // Transform JSON into S and E format
+      const newS = [];
+      Object.values(json.skills).forEach(sk => {
+        newS.push({
+          id: sk.id,
+          l: sk.label.replace(/ /g, '\n'),  // Two-line labels
+          c: sk.cluster,
+          d: sk.description,
+          u: sk.when_to_use || '',
+          nu: sk.when_not_to_use || '',
+          i: sk.input || '',
+          o: sk.output || '',
+          by: sk.contributor || 'Dhwani RIS',
+          gp: sk.golden_path_order || null,
+          router: sk.is_router || false
+        });
+      });
+
+      const newE = json.edges.map(e => ({
+        f: e.from, t: e.to, y: e.type, gp: e.golden_path || false
+      }));
+
+      // Replace globals
+      S = newS;
+      E = newE;
+      skillMap = {};
+      S.forEach(s => skillMap[s.id] = s);
+
+      // Update badge
+      badge.classList.remove('static');
+      badge.classList.add('live');
+      badgeSrc.innerHTML = `Live · <a href="${src.url}" target="_blank">${src.label}</a> · ${S.length} skills · ${E.length} edges`;
+      liveLoaded = true;
+
+      // Update splash numbers
+      const nums = document.querySelectorAll('.num-item .n');
+      if (nums.length >= 4) {
+        nums[0].textContent = S.length;
+        nums[2].textContent = E.length;
+      }
+      // Update footer stats
+      const stats = document.querySelectorAll('footer .stats strong');
+      if (stats.length >= 2) {
+        stats[1].textContent = S.length;
+        stats[2].textContent = E.length;
+      }
+
+      console.log(`[Skill Graph] Loaded LIVE data from ${src.label}: ${S.length} skills, ${E.length} edges`);
+      break;
+    } catch (err) {
+      console.log(`[Skill Graph] ${src.label} failed:`, err.message);
+    }
+  }
+
+  if (!liveLoaded) {
+    badge.classList.remove('live');
+    badge.classList.add('static');
+    badgeSrc.textContent = `Embedded · ${S.length} skills (update SKILL_GRAPH.json to go live)`;
+    console.log('[Skill Graph] Using embedded fallback data');
+  }
+
+  render();
+}
+
+init();
+window.addEventListener('resize', () => { deselect(); closePanel(); render(); });
+</script>
+</body>
+</html>
