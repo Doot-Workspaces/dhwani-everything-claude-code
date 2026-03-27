@@ -22,6 +22,25 @@ This fork layers **35+ proprietary skills** on top of the community's 120+ skill
 
 ---
 
+## Dhwani Tech Stack Focus
+
+This repo is curated for **expert developers** working on the Dhwani stack. Skills are organized around what Dhwani actually builds:
+
+| Priority | Stack | Key Skills |
+|----------|-------|------------|
+| **Core** | Python, Frappe Framework | `frappe-development`, `python-patterns`, `python-testing`, `dris-mgrant-coding-hygiene` |
+| **Core** | Dashboarding & UI | `figma-to-powerbi`, `frappe-ui-design`, `frontend-designer`, `postgres-frappe-patterns` |
+| **Core** | AI Applications | `claude-api`, `prompt-optimizer`, `deep-research` |
+| **Core** | Domain Knowledge | `csr-compliance-india`, `fcra-compliance`, `grant-management-operations`, `ngo-operations` |
+| **Product** | mGrant Platform | `dris-mgrant-donor`, `dris-mgrant-csr`, `dris-mgrant-nuo`, `dris-mgrant-setup` |
+| **Quality** | Testing & QA | `qa-testing`, `e2e-testing`, `govt-csr-compliance` |
+| **Process** | PM Workflow | `dris-feature-spec`, `dris-technical-pm`, `dris-business-analyst`, `dris-ticketing` |
+| Reference | General Engineering | 120+ upstream community skills (Go, Rust, Java, etc.) — available but not Dhwani focus |
+
+> **Not our focus:** MLE, mobile-native (Kotlin/Swift), Java/Spring, Ruby, Perl. These are available from upstream but Dhwani developers should start with the skills above.
+
+---
+
 ## DRIS Skill Graph
 
 ### Quick Start — "I want to..."
@@ -48,6 +67,7 @@ This fork layers **35+ proprietary skills** on top of the community's 120+ skill
 | Onboard to mGrant Donor product | `dris-mgrant-donor` |
 | Onboard to mGrant CSR module | `dris-mgrant-csr` |
 | Onboard to mGrant NuO product | `dris-mgrant-nuo` |
+| Review code for mGrant standards | `dris-mgrant-coding-hygiene` |
 | Not sure which skill to use | `dris-skill-selector` (routes to the right one) |
 
 ### The Golden Path (Idea to Shipped Code)
@@ -79,7 +99,7 @@ Client Call / Requirement
 [dris-frappe-doctype] --> DocType JSON + Workflows
        |
        v
-[frappe-development] --> Production Code
+[frappe-development] + [dris-mgrant-coding-hygiene] --> Production Code
        |
        v
   +-- DESIGN REVIEW CHAIN ----------------+
@@ -126,7 +146,7 @@ Client Call / Requirement
 | `system-architecture` | 5-pillar thinking, 20-question framework, AI-aware decomposition |
 | `figma-to-powerbi` | Figma dashboard to PowerBI: theme JSON, layout specs, PBIR scaffolding, DAX measures |
 
-**Product Workflows (17 skills, `dris-` prefix)** — PM, BA, engineering, and delivery
+**Product Workflows (18 skills, `dris-` prefix)** — PM, BA, engineering, and delivery
 
 | Skill | Role | What It Produces |
 |-------|------|-----------------|
@@ -147,11 +167,13 @@ Client Call / Requirement
 | `dris-mgrant-nuo` | Domain | mGrant NuO: NGO grants, sub-grants, FCRA |
 | `dris-mgrant-bulk-upload` | Engineer | Data import with PREP-MAP-SAMPLE-EXECUTE and PM gates |
 | `dris-mgrant-setup` | Engineer | New mGrant deployment (11 phases) |
+| `dris-mgrant-coding-hygiene` | Engineer | Org-wide coding standards: 4-layer stack, PS vs Translation, fixtures, permissions, security |
 
-**Technical Skills (13 skills)** — Frappe, Angular/Node, DevOps, database patterns
+**Technical Skills (14 skills)** — Frappe, Angular/Node, DevOps, database patterns
 
 | Skill | Focus |
 |-------|-------|
+| `dris-mgrant-coding-hygiene` | **Org-wide mGrant/Frappe coding standards** — 4-layer stack, config decision tree, fixture discipline, permissions, security, deployment checklists |
 | `frappe-development` | DocType design, API security, hooks, testing (500 lines of patterns) |
 | `qa-testing` | Playwright E2E, Page Object Model, CI, permission testing (569 lines) |
 | `pm-workflow` | Figma-to-code pipeline, walkthrough generation, demo prep |
@@ -215,6 +237,7 @@ The following files are **proprietary and confidential** to Dhwani Rural Informa
 - `skills/dris-mgrant-nuo/` — mGrant NuO product context
 - `skills/dris-mgrant-bulk-upload/` — mGrant data import workflows
 - `skills/dris-mgrant-setup/` — mGrant deployment configuration
+- `skills/dris-mgrant-coding-hygiene/` — mGrant/Frappe coding hygiene and developer practices
 
 ```
 Copyright (c) 2026 Dhwani Rural Information Systems Pvt. Ltd.
